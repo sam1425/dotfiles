@@ -78,13 +78,13 @@ font pango:monospace 8
 
 
 # Start XDG autostart .desktop files using dex
-exec --no-startup-id dex --autostart --environment i3
+#exec --no-startup-id dex --autostart --environment i3
 
 #clipboard manager
 exec --no-startup-id clipmenud
 
 #notifications
-exec_always --no-startup-id dunst &
+#exec_always --no-startup-id dunst &
 
 # Network Manager gui
 # exec --no-startup-id nm-applet
@@ -93,7 +93,7 @@ exec_always --no-startup-id dunst &
 set $refresh_i3status killall -SIGUSR1 i3status
 
 #start picom
-exec_always --no-startup-id picom
+#exec_always --no-startup-id picom
 
 exec --no-startup-id xset -dpms
 exec --no-startup-id xset s off
