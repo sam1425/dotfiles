@@ -80,10 +80,15 @@ export FZF_DEFAULT_OPTS="
   --height 40"
 
 # ZSH-VI-MODE plugin
-export ZVM_READKEY_ENGINE=$ZVM_READKEY_ENGINE_ZLE
-export ZVM_SYSTEM_CLIPBOARD_ENABLED=true
+export ZVM_READKEY_ENGINE=$ZVM_READKEY_ENGINE_NEX
+#export ZVM_READKEY_ENGINE=$ZVM_READKEY_ENGINE_ZLE
 export ZVM_CURSOR_STYLE_ENABLED=true
-export KEYTIMEOUT=1
+export ZVM_SYSTEM_CLIPBOARD_ENABLED=true
+export ZVM_VI_SURROUND_BINDKEY=classic
+export ZVM_CLIPBOARD_COPY_CMD='xclip -selection clipboard'
+export ZVM_CLIPBOARD_PASTE_CMD='xclip -selection clipboard -o'
+export ZVM_INIT_MODE=sourcing
+export KEYTIMEOUT=20
 # Starship taking the power from vi mode
 export STARSHIP_ZLE_RPROMPT_NUM_LINES=1
 export STARSHIP_CONFIG="$HOME/.config/starship/starship.toml"

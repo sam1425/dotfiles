@@ -14,9 +14,9 @@ env
 aliases
 utility
 options
+keybinds
 plugins
 prompt
-keybinds
 EOF
 
 [[ -t 0 ]] && stty -echoctl

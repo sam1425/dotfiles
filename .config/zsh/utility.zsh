@@ -140,6 +140,14 @@ cls() {
     fi
 }
 
+function zvm_after_init() {
+  # For Wayland:
+  #zvm_bindkey vicmd 'y' 'echo -n $CUTBUFFER | wl-copy'
+  
+  # OR for X11:
+  # zvm_bindkey vicmd 'y' 'echo -n $CUTBUFFER | xclip -selection clipboard'
+}
+
 # Usage: extract <file>
 # Description: extracts archived files / mounts disk images
 # Note: .dmg/hdiutil is macOS-specific.

@@ -20,9 +20,19 @@ function smart-j-down() {
     fi
 }
 
+
 # --- Binds ---
 # Vim plugin keybinds:
 function zvm_after_init() {
+
+    #export ZVM_READKEY_ENGINE=$ZVM_READKEY_ENGINE_NEX
+    #export ZVM_READKEY_ENGINE=$ZVM_READKEY_ENGINE_ZLE
+    export ZVM_READKEY_ENGINE=$ZVM_READKEY_ENGINE_NEX
+    export ZVM_CURSOR_STYLE_ENABLED=true
+    export ZVM_SYSTEM_CLIPBOARD_ENABLED=true
+    export ZVM_VI_SURROUND_BINDKEY=classic
+    export KEYTIMEOUT=20
+
     zvm_define_widget smart-k-up
     zvm_define_widget smart-j-down
 
@@ -32,6 +42,7 @@ function zvm_after_init() {
     zvm_bindkey vicmd '^J' smart-j-down
     zvm_bindkey vicmd 'k' smart-k-up
     zvm_bindkey vicmd 'j' smart-j-down
+    zvm_bindkey viins '^y' zvm_yank_to_clipboard
 
     zvm_bindkey viins '^B' _sudo_command_line
     zvm_bindkey vicmd '^B' _sudo_command_line

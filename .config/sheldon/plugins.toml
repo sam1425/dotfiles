@@ -5,10 +5,6 @@ shell = "zsh"
 [plugins.zsh-defer]
 github = "romkatv/zsh-defer"
 
-[plugins.zsh-vi-mode]
-github = "jeffreytse/zsh-vi-mode"
-apply = ["defer"]
-
 [plugins.zsh-completions]
 github = "zsh-users/zsh-completions"
 
@@ -27,6 +23,10 @@ apply = ["defer"]
 [plugins.fast-syntax-highlighting]
 github = "zdharma-continuum/fast-syntax-highlighting"
 apply = ["defer"]
+
+[plugins.zsh-vi-mode]
+github = "jeffreytse/zsh-vi-mode"
+
 
 [templates]
 defer = "{% for file in files %}zsh-defer source \"{{ file }}\"\n{% endfor %}"
