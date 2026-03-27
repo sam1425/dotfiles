@@ -121,6 +121,23 @@ chpwd() {
     ls --group-directories-first --color=auto -F
 }
 
+function pacclean() {
+    local orphans=$(pacman -Qtdq)
+    if [[ -n "$orphans" ]]; then
+        echo "$orphans" | fzf -m --header "Select orphans to remove" | xargs -ro sudo pacman -Rns
+    else
+        echo "No orphans found."
+    fi
+}
+
+function fkill() {
+    local pid
+    pid=$(ps -ef | sed 1d | fzf -m | awk '{print $2}')
+    if [ "x$pid" != "x" ]; then
+        echo $pid | xargs kill -${1:-9}
+    fi
+}
+
 function git-svn(){
   if [[ ! -z "$1" && ! -z "$2" ]]; then
           echo "Starting clone/copy ..."

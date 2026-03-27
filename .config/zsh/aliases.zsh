@@ -10,7 +10,14 @@ alias icat='kitten icat'
 alias lynx='lynx -vikeys'
 alias Prompt='PROMPT="%~ % "'
 alias emacst='emacsclient -a ''"'
-alias emacs="emacsclient -n -a ''"
+emacs() {
+    # Jump to Tag 2 in dwm
+    xdotool key alt+2
+    # busy until the buffer is closed
+    emacsclient -a '' "$@">/dev/null 2>&1
+    # Once Emacs is closed, jump back to Tag 1
+    xdotool key alt+1
+}
 alias vimacs="\emacs -nw"
 
 #Useful:
@@ -25,12 +32,15 @@ alias untar='tar zxvf' # untar <archive_decompress> <file_list>
 alias zp='zip -r' # z <archive_compress> <file_list>
 alias sr='source ~/.config/zsh/env.zsh'
 alias ..="\cd .."
+alias ...='\cd ../../../'
+alias ....='\cd ../../../../'
 alias psg="ps aux | grep -v grep | grep -i -e VSZ -e"
 alias md="mkdir -p"
 alias fm='yazi'
 alias pacin="pacman -Slq | fzf -m --preview 'cat <(pacman -Si {1}) <(pacman -Fl {1} | awk \"{print \$2}\")' | xargs -ro sudo pacman -S"
 alias paruin="paru -Slq | fzf -m --preview 'cat <(paru -Si {1}) <(paru -Fl {1} | awk \"{print \$2}\")' | xargs -ro  paru -S"
 alias pacrem="pacman -Qq | fzf --multi --preview 'pacman -Qi {1}' | xargs -ro sudo pacman -Rns"
+alias mirrors="sudo reflector --latest 20 --protocol https --sort rate --save /etc/pacman.d/mirrorlist"
 alias pac="pacman -Q | fzf"
 alias parucom="paru -Gc"
 alias parupd="paru -Qua"
@@ -51,8 +61,9 @@ alias llh="ls -lh"
 alias lt="ls --tree"
 alias cat="bat --color=always --plain"
 alias bat="bat --color=always"
-alias mv='mv -v'
-alias cp='cp -vr'
+alias mv='mv -iv'
+alias cp='cp -ivr'
+alias copy="xclip -selection clipboard -i"
 alias rmvr='rm -vr'
 alias xprop='xprop -id $(slop -f "%i" -b 2 -p -2 -c 0.2,0.51,0.45,1 2>/dev/null)'
 #Not so useful: 
@@ -60,10 +71,12 @@ alias xprop='xprop -id $(slop -f "%i" -b 2 -p -2 -c 0.2,0.51,0.45,1 2>/dev/null)
 #alias run='pnpm run'
 #alias trim_all="sudo fstrim -va"
 
+#Networking
+alias ports='netstat -tulanp'
+
 #git specific:
 alias gitaliases='source "~/.config/zsh/specific/gitaliases.zsh"'
 #Miscelaneous:
-alias copy="xclip -selection clipboard -i"
 alias compresspdf="gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=/ebook -dNOPAUSE -dQUIET -dBATCH -sOutputFile=compressed.pdf"
 alias updatediscord='sudo pacman -Syy && sudo pacman -Sy discord && sh -c "$(curl -sS https://raw.githubusercontent.com/Vendicated/VencordInstaller/main/install.sh)"'
 
