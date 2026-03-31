@@ -24,9 +24,8 @@ apply = ["defer"]
 github = "zdharma-continuum/fast-syntax-highlighting"
 apply = ["defer"]
 
-
-
 [templates]
 defer = "{% for file in files %}zsh-defer source \"{{ file }}\"\n{% endfor %}"
+
 [plugins.zsh-vi-mode]
 github = "jeffreytse/zsh-vi-mode"
