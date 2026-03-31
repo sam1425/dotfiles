@@ -24,12 +24,6 @@ function smart-j-down() {
 # --- Binds ---
 # Vim plugin keybinds:
 function zvm_after_init() {
-    export ZVM_CURSOR_STYLE_ENABLED=true
-    export ZVM_SYSTEM_CLIPBOARD_ENABLED=true
-    export ZVM_VI_SURROUND_BINDKEY=classic
-    export KEYTIMEOUT=20
-
-    zvm_define_widget zvm_surround_quote
 
     zvm_define_widget smart-k-up
     zvm_define_widget smart-j-down
@@ -40,39 +34,89 @@ function zvm_after_init() {
     zvm_bindkey vicmd '^J' smart-j-down
     zvm_bindkey vicmd 'k' smart-k-up
     zvm_bindkey vicmd 'j' smart-j-down
-    zvm_bindkey viins '^y' zvm_yank_to_clipboard
 
     zvm_bindkey viins '^B' _sudo_command_line
     zvm_bindkey vicmd '^B' _sudo_command_line
 }
 
 function zvm_after_lazy_keybindings() {
-    # 1. Ensure Surround is active in Classic Mode
-    zvm_bindkey vicmd 'S' zvm_surround_add
-    zvm_bindkey visual 'S' zvm_surround_add
-    zvm_bindkey vicmd 'cs' zvm_surround_edit
-    zvm_bindkey vicmd 'ds' zvm_surround_delete
+    # Checks if there is a detected soround keys ahead
+    zvm_quote_seeker() {
+        local ret=($(zvm_parse_surround_keys))
+        local action=${ret[1]}
+        local char=${ret[2]}
+        local widget
 
-    # 2. Manually map text objects for ALL relevant ZVM maps
-    # Use a list to avoid the "select-quoted" escaping nightmare
-    local -a zvm_maps
-    zvm_maps=($ZVM_VICMD_KEYMAP $ZVM_VISUAL_KEYMAP $ZVM_OPPEND_KEYMAP)
+        # Determine the ZVM internal widget and ensure mode
+        if [[ "${action:0:1}" == "v" ]]; then
+            widget="zvm_select_surround"
+            # Ensure we are in visual mode if calling vi" from cmd mode
+            if [[ "$ZVM_MODE" != "$ZVM_MODE_VISUAL" ]]; then
+                zvm_select_vi_mode $ZVM_MODE_VISUAL
+            fi
+        else
+            widget="zvm_change_surround_text_object"
+        fi
 
-    for map in $zvm_maps; do
-        # Quoted objects
-        zvm_bindkey $map 'i"' zvm_select_quoted
-        zvm_bindkey $map 'a"' zvm_select_quoted
-        zvm_bindkey $map "i'" zvm_select_quoted
-        zvm_bindkey $map "a'" zvm_select_quoted
-        zvm_bindkey $map 'i`' zvm_select_quoted
-        zvm_bindkey $map 'a`' zvm_select_quoted
+        # Check if surround exists here
+        local found=($(zvm_search_surround "$char"))
         
-        # Bracket objects (common for C development)
-        zvm_bindkey $map 'i(' zvm_select_brackets
-        zvm_bindkey $map 'a(' zvm_select_brackets
-        zvm_bindkey $map 'i{' zvm_select_brackets
-        zvm_bindkey $map 'a{' zvm_select_brackets
-    done
+        if [[ ${#found[@]} == 0 ]]; then
+             # No quote here, seek forward
+             local next=$(zvm_substr_pos "$BUFFER" "$char" $((CURSOR + 1)) true)
+             if [[ $next != -1 ]]; then
+                 CURSOR=$((next + 1))
+             fi
+        fi
+
+        # Trigger ZVM action
+        $widget "$action" "$char"
+    }
+    zvm_define_widget zvm_quote_seeker
+
+    # 2. Explicit Safe Bindings
+    
+    # --- Double Quotes ---
+    zvm_bindkey visual 'i"' zvm_quote_seeker
+    zvm_bindkey visual 'a"' zvm_quote_seeker
+    zvm_bindkey vicmd  'vi"' zvm_quote_seeker
+    zvm_bindkey vicmd  'va"' zvm_quote_seeker
+    zvm_bindkey vicmd  'ci"' zvm_quote_seeker
+    zvm_bindkey vicmd  'ca"' zvm_quote_seeker
+    zvm_bindkey vicmd  'di"' zvm_quote_seeker
+    zvm_bindkey vicmd  'da"' zvm_quote_seeker
+    zvm_bindkey vicmd  'yi"' zvm_quote_seeker
+    zvm_bindkey vicmd  'ya"' zvm_quote_seeker
+    zvm_bindkey viopp  'i"' zvm_quote_seeker
+    zvm_bindkey viopp  'a"' zvm_quote_seeker
+
+    # --- Single Quotes ---
+    zvm_bindkey visual "i'" zvm_quote_seeker
+    zvm_bindkey visual "a'" zvm_quote_seeker
+    zvm_bindkey vicmd  "vi'" zvm_quote_seeker
+    zvm_bindkey vicmd  "va'" zvm_quote_seeker
+    zvm_bindkey vicmd  "ci'" zvm_quote_seeker
+    zvm_bindkey vicmd  "ca'" zvm_quote_seeker
+    zvm_bindkey vicmd  "di'" zvm_quote_seeker
+    zvm_bindkey vicmd  "da'" zvm_quote_seeker
+    zvm_bindkey vicmd  "yi'" zvm_quote_seeker
+    zvm_bindkey vicmd  "ya'" zvm_quote_seeker
+    zvm_bindkey viopp  "i'" zvm_quote_seeker
+    zvm_bindkey viopp  "a'" zvm_quote_seeker
+
+    # --- Backticks ---
+    zvm_bindkey visual 'i`' zvm_quote_seeker
+    zvm_bindkey visual 'a`' zvm_quote_seeker
+    zvm_bindkey vicmd  'vi`' zvm_quote_seeker
+    zvm_bindkey vicmd  'va`' zvm_quote_seeker
+    zvm_bindkey vicmd  'ci`' zvm_quote_seeker
+    zvm_bindkey vicmd  'ca`' zvm_quote_seeker
+    zvm_bindkey vicmd  'di`' zvm_quote_seeker
+    zvm_bindkey vicmd  'da`' zvm_quote_seeker
+    zvm_bindkey vicmd  'yi`' zvm_quote_seeker
+    zvm_bindkey vicmd  'ya`' zvm_quote_seeker
+    zvm_bindkey viopp  'i`' zvm_quote_seeker
+    zvm_bindkey viopp  'a`' zvm_quote_seeker
 }
 # Add text object extension -- eg ci" da(:
 #autoload -U select-quoted

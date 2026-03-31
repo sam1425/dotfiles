@@ -86,7 +86,7 @@ export ZVM_VI_SURROUND_BINDKEY=classic
 export ZVM_CLIPBOARD_COPY_CMD='xclip -selection clipboard'
 export ZVM_CLIPBOARD_PASTE_CMD='xclip -selection clipboard -o'
 export ZVM_INIT_MODE=sourcing
-export KEYTIMEOUT=20
+export KEYTIMEOUT=30
 # Starship taking the power from vi mode
 export STARSHIP_ZLE_RPROMPT_NUM_LINES=1
 export STARSHIP_CONFIG="$HOME/.config/starship/starship.toml"
