@@ -1,0 +1,22 @@
+#!/bin/sh
+
+# size threshold in KB (example: 200 KB)
+THRESHOLD=50
+
+# if no args, just open nvim
+[ $# -eq 0 ] && exec nvim
+
+FILE="$1"
+
+# if file does not exist yet → treat as small
+if [ ! -f "$FILE" ]; then
+    exec nvim "$@"
+fi
+
+SIZE_KB=$(du -k "$FILE" | cut -f1)
+
+if [ "$SIZE_KB" -gt "$THRESHOLD" ]; then
+    exec subl "$@"
+else
+    exec nvim "$@"
+fi

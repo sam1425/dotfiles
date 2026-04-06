@@ -1,0 +1,62 @@
+#!/bin/sh
+# Wrapper script to unify CLI arguments for my frequently used terminal
+# emulators.
+
+# Strictly use newline as IFS. printf does not output a trailing newline
+# so use this workaround.
+IFS="$(printf '\nx')" && IFS="${IFS%x}"
+
+# Posix shell only provides one array, so cache the input arguments in a
+# string and shift them one by one based on IFS. "$@" will be used to
+# accumulate the translated arguments.
+args="$*$IFS"
+shift_args() {
+    arg="${args%%"$IFS"*}"
+    args="${args#"$arg$IFS"}"
+}
+
+set --
+while [ -n "$args" ]; do
+    shift_args
+    case "$arg" in
+        -n | --name)
+            shift_args
+            case "$TERMINAL" in
+                alacritty) set -- "$@" --class "$arg",Alacritty ;;
+                foot) set -- "$@" -a "$arg" ;;
+                st) set -- "$@" -n "$arg" ;;
+            esac
+            ;;
+        -d | --dir)
+            shift_args
+            case "$TERMINAL" in
+                alacritty | foot) set -- "$@" --working-directory "$arg" ;;
+                st) set -- "$@" -d "$arg" ;;
+            esac
+            ;;
+        -g)
+            shift_args
+            case "$TERMINAL" in
+                alacritty)
+                    columns=${arg%x*}
+                    lines=${arg##*x}
+                    set -- "$@" "-o" window.dimensions.columns="$columns" \
+                        "-o" window.dimensions.lines="$lines"
+                    ;;
+                foot) set -- "$@" -W "$arg" ;;
+                st) set -- "$@" -g "$arg" ;;
+            esac
+            ;;
+        '')
+            # When no args are passed, $args is set to '\n', which should be ignored.
+            ;;
+        *) set -- "$@" "$arg" ;;
+    esac
+done
+
+case "$TERMINAL" in
+    ghostty) set -- "$@" +new-window ;; # Use existing process if possible.
+    *) ;;                               # Do nothing.
+esac
+
+exec "$TERMINAL" "$@"

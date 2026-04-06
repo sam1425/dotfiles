@@ -1,0 +1,27 @@
+#!/bin/sh
+# Toggle the WiFi hotspot using NetworkManager.
+
+ssid="Dare To Hack Into"
+password="whatthehell"
+connection="Hotspot"
+
+notify() {
+    notify-send \
+        --icon=network-wireless-hotspot-symbolic \
+        --hint=string:x-canonical-private-synchronous:hotspot \
+        "WiFi Hotspot" "$1"
+}
+
+if nmcli --terse --fields TYPE,CONNECTION device status |
+    grep -q "wifi:$connection"; then
+
+    nmcli connection down "$connection" &&
+        notify "Hotspot has been successfully disabled."
+    exit
+fi
+
+# shellcheck disable=2012
+interface="$(ls /sys/class/ieee80211/*/device/net/ | head -1)"
+nmcli device wifi hotspot ifname "$interface" con-name "$connection" \
+    ssid "$ssid" password "$password" &&
+    notify "Hotspot has been successfully enabled."

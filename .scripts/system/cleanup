@@ -1,0 +1,106 @@
+#!/bin/bash
+
+# Level Library
+# https://level.io/library/script-linux-disk-cleanup
+# Optimized by Gemini CLI for performance
+
+# Create log file
+LOG_FILE="/var/log/cleanup_$(date +%Y%m%d_%H%M).log"
+
+if [ "$EUID" -ne 0 ]; then
+    echo "Please run as root"
+    exit 1
+fi
+
+log_message() {
+    echo "$1" | tee -a "$LOG_FILE"
+}
+
+get_total_usage() {
+    local paths=("$@")
+    local total=0
+    for p in "${paths[@]}"; do
+        if [[ -d "$p" ]]; then
+            local size=$(du -sk "$p" 2>/dev/null | cut -f1)
+            total=$((total + size))
+        fi
+    done
+    echo "$total"
+}
+
+TEMP_PATHS=(
+    "/tmp"
+    "/home/c0mplex/.cache"
+    "/home/c0mplex/.vim/filebackups"
+    "/home/c0mplex/.emacs.d/filebackups"
+    "/var/tmp"
+    "/var/cache/pacman/pkg"
+    "/var/log"
+)
+
+log_message "Server cleanup started at $(date)"
+log_message "Hostname: $(hostname)"
+
+# Baseline usage
+USAGE_BEFORE=$(get_total_usage "${TEMP_PATHS[@]}")
+
+# 1. Specialized Cleanup (Package Manager)
+if command -v pacman >/dev/null 2>&1; then
+    log_message "Cleaning pacman cache..."
+    pacman -Scc --noconfirm >/dev/null 2>&1
+elif command -v apt-get >/dev/null 2>&1; then
+    log_message "Cleaning apt cache..."
+    apt-get clean >/dev/null 2>&1
+fi
+
+# 2. Specialized Cleanup (Logs)
+if [[ -d "/var/log" ]]; then
+    log_message "Cleaning /var/log (older than 30 days)..."
+    find /var/log -type f \( -name "*.gz" -o -name "*.old" -o -name "*.log.*" \) -mtime +30 -delete 2>/dev/null
+fi
+
+# 3. General Cleanup for other paths
+for path in "${TEMP_PATHS[@]}"; do
+    # Skip /var/log and package caches as they are handled specially
+    if [[ "$path" == "/var/log" || "$path" == "/var/cache/pacman/pkg" || "$path" == "/var/cache/apt/archives" ]]; then
+        continue
+    fi
+    
+    if [[ -d "$path" ]]; then
+        log_message "Cleaning $path (files older than 7 days)..."
+        # Using -delete is much faster than piping to rm
+        find "$path" -type f -mtime +7 -delete 2>/dev/null
+        # Clean empty directories as well
+        find "$path" -mindepth 1 -type d -empty -delete 2>/dev/null
+    fi
+done
+
+# 4. Docker/K8s/Journald
+if command -v journalctl >/dev/null 2>&1; then
+    log_message "Vacuuming journald logs..."
+    journalctl --vacuum-time=30d >/dev/null 2>&1
+fi
+
+if command -v docker >/dev/null 2>&1; then
+    log_message "Pruning Docker resources..."
+    docker system prune -f --volumes >/dev/null 2>&1
+fi
+
+if [[ -d "/var/log/containers" ]]; then
+    log_message "Cleaning Kubernetes container logs..."
+    find /var/log/containers -type f -mtime +30 -delete 2>/dev/null
+    find /var/log/pods -type f -mtime +30 -delete 2>/dev/null
+fi
+
+# Summary
+USAGE_AFTER=$(get_total_usage "${TEMP_PATHS[@]}")
+SAVED_KB=$((USAGE_BEFORE - USAGE_AFTER))
+TOTAL_GB=$(echo "scale=2; $SAVED_KB/1024/1024" | bc)
+
+log_message "Cleanup completed at $(date)"
+log_message "Total space saved: ${TOTAL_GB} GB"
+log_message "Log file saved to: $LOG_FILE"
+
+log_message "Current disk usage:"
+#df -h | grep '^/' | tee -a "$LOG_FILE"
+dysk

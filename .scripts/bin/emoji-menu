@@ -1,0 +1,67 @@
+#!/bin/sh
+# Display an emoji prompt.
+#
+# This script takes inspiration from:
+#   https://gist.github.com/Tadly/0741821d3694deaec1ee454a95c591fa
+
+set -e
+
+# Where to save the emojis file.
+EMOJI_FILE="$XDG_CACHE_HOME/emojis"
+URL="https://unicode.org/emoji/charts/emoji-list.html"
+
+notify() {
+    notify-send \
+        --icon=emoji-people-symbolic \
+        --expire-time=1500 \
+        --hint string:x-canonical-private-synchronous:emojis \
+        "Emoji Prompt" "$@"
+}
+
+download() {
+    notify "Downloading emojis for your pleasure"
+
+    # Scrape emoji metadata from the webpage
+    curl -s "$URL" |
+        xmllint --html --xpath '//td[@class="andr"]/a/img/@title' - 2>/dev/null |
+        sed 's/^ title="\(U+[0-9,A-Z]* \)*\([^ ]*\) \(.*\)"/\2 \u\3/; s/\&amp;/and/' >"$EMOJI_FILE"
+
+    notify "We're all set!"
+}
+
+# Some simple argparsing
+case "$1" in
+    -c | --copy)
+        MUST_COPY=1
+        ;;
+    -h | --help)
+        echo "usage: $0 [-c|--copy, -h|--help]"
+        exit
+        ;;
+esac
+
+# Download all emojis if they don't exist yet.
+if [ ! -r "$EMOJI_FILE" ]; then
+    download
+    exit
+fi
+
+emojis="$(grep -v '#' "$EMOJI_FILE" | grep -v '^[[:space:]]*$')"
+if line="$(echo "$emojis" | menu -l 8 -i -p "Emoji:")"; then
+    emoji="${line%%[[:space:]]*}"
+
+    if [ -n "$MUST_COPY" ]; then
+        printf "%s" "$emoji" | {
+            case "$XDG_SESSION_TYPE" in
+                wayland) wl-copy ;;
+                x11) xclip -sel clipboard ;;
+            esac
+        } && notify "'$emoji' copied to clipboard."
+        exit
+    fi
+
+    case "$XDG_SESSION_TYPE" in
+        wayland) wtype "$emoji" ;;
+        x11) xdotool type "$emoji" ;;
+    esac
+fi

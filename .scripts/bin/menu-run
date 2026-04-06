@@ -1,0 +1,30 @@
+#!/bin/sh
+# Display a menu to run executables on the machine.
+
+CACHE_DIR="${XDG_CACHE_DIR:-$HOME/.cache}"/menu-run
+
+update_dir_cache() {
+    [ -d "$1" ] || return
+    dir=$1
+    cache_file="$CACHE_DIR"/"$(echo "$dir" | tr '/' '_')"
+
+    # Update cache if the directory changed.
+    if [ ! -f "$cache_file" ] || find "$dir" -type f -executable -newer "$cache_file" >/dev/null 2>&1; then
+        find "$dir" -maxdepth 1 -type f -executable 2>/dev/null >"$cache_file"
+    fi
+}
+
+list_commands() {
+    cat "$CACHE_DIR"/* | sed 's|.*/\(.*\)|\1|' | sort --unique
+}
+
+mkdir -p "$CACHE_DIR"
+
+dirs=$(echo "$PATH" | tr ':' '\n' | uniq)
+for dir in $dirs; do
+    update_dir_cache "$dir" &
+done
+wait
+
+choice=$(list_commands | menu -p "Run:" "$@")
+[ -n "$choice" ] && exec "$choice"

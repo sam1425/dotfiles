@@ -1,0 +1,82 @@
+#!/usr/bin/env bash
+set -euo pipefail
+export DISPLAY="${DISPLAY:-:0}"
+
+OUTDIR="${2:-$HOME/Pictures/Screenshots}"
+[[ -d "$OUTDIR" ]] || { notify-send "Screenshot dir not found: $OUTDIR"; exit 1; }
+FILE="$OUTDIR/$(date +%Y%m%d_%H%M%S).png"
+TMP=$(mktemp --suffix=.png); trap 'rm -f "$TMP"' EXIT
+
+check_deps() {
+    for cmd in "$@"; do
+        command -v "$cmd" &>/dev/null || { notify-send "Missing: $cmd"; exit 1; }
+    done
+}
+
+post(){ 
+    [[ -f "$FILE" ]] || return 1
+    check_deps xclip notify-send
+    
+    if [[ "${WATERMARK:-}" == "1" ]]; then 
+        check_deps magick
+        magick "$FILE" -gravity "${WATERMARK_POS:-southeast}" -pointsize "${WATERMARK_SIZE:-28}" \
+               -fill white -undercolor "${WATERMARK_BG:-#00000080}" \
+               -annotate +20+20 "${WATERMARK_TEXT:-$(date '+%Y-%m-%d %H:%M')}" "$FILE"
+    fi
+    xclip -selection clipboard -t image/png -i "$FILE" && notify-send -i "$FILE" "Saved: $(basename "$FILE")"
+    command -v imgcliphist &>/dev/null && imgcliphist add
+}
+
+colorpicker(){
+    check_deps magick xclip xdotool slop
+
+    slop -n -f "" >/dev/null 2>&1 || exit 0
+
+    eval "$(xdotool getmouselocation --shell 2>/dev/null)"
+
+    hex=$(magick x:root -crop "4x4+$((X-2))+$((Y-2))" +repage \
+          -resize 1x1\! -depth 8 txt:- 2>/dev/null \
+          | grep -om1 '#[0-9A-Fa-f]\{6\}')
+
+    [[ -z "$hex" ]] && exit 0
+    echo -n "$hex" | xclip -selection clipboard -i
+    notify-send "Color Picked" "$hex"
+}
+
+capture_full(){ 
+    check_deps maim
+    maim "$FILE" && post
+}
+
+capture_window(){ 
+    check_deps maim xdotool
+    maim -i "$(xdotool getwindowfocus 2>/dev/null)" "$FILE" && post
+}
+
+capture_selection(){ 
+    check_deps maim slop
+    GEOM=$(slop -n -f '%g' 2>/dev/null || true)
+    [[ -z "$GEOM" ]] && exit 0
+    maim -g "$GEOM" "$FILE" && post
+}
+
+capture_hover_window(){
+    check_deps maim slop
+
+    WIN=$(slop -f "%i" -b 2 -p -2 -c 0.2,0.51,0.45,1 2>/dev/null || exit 0)
+    [[ -z "$WIN" ]] && exit 0
+
+    maim -i "$WIN" "$FILE" && post
+}
+
+main(){ 
+    case "${1:-}" in
+        color*) colorpicker ;;
+        full)    capture_full ;;
+        window)  capture_window ;;
+        hover)   capture_hover_window ;;
+        *)       capture_selection ;;
+    esac
+}
+
+main "$@"

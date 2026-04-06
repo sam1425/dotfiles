@@ -1,0 +1,28 @@
+#!/bin/sh
+# Open URLs from the terminal with dmenu.
+
+dmenu() {
+    command dmenu -i -l 10 -w "$WINDOWID" -bw 2 -fn "$(xrdb -get st.font)" "$@" |
+        tr -d '\n' # Trim trailing newline.
+}
+
+# Detect http/https/ftp URLs.
+urls="$(grep --text --extended-regexp --only-matching '(http|https|ftp)://[a-zA-Z~0-9.&/#?=_%:-]*' | uniq)"
+
+[ -z "$urls" ] && exit 1
+
+while [ $# -gt 0 ]; do
+    case "$1" in
+        --copy)
+            echo "$urls" |
+                dmenu -p "Copy which URL?" |
+                xclip -selection clipboard
+            ;;
+        --open)
+            url="$(echo "$urls" | tac | dmenu -p "Follow which URL?")"
+            setsid xdg-open "$url" >/dev/null 2>&1 &
+            ;;
+    esac
+
+    shift
+done

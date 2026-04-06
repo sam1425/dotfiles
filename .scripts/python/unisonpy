@@ -1,0 +1,32 @@
+#!/usr/bin/env python3
+import os
+
+def update_unison_profile():
+    path = input("Enter the path for both roots (e.g., /home/sam/.emacs.d): ").strip()
+
+    profile_path = os.path.expanduser("~/.config/unison/mutable.prf")
+    
+    if not os.path.exists(profile_path):
+        print(f"Error: {profile_path} not found.")
+        return
+
+    # Construct the specific root lines
+    local_root = f"root = {path}\n"
+    remote_root = f"root = ssh://laptop//{path}\n"
+
+    with open(profile_path, 'r') as f:
+        lines = f.readlines()
+
+    # Remove all existing root entries
+    filtered_lines = [line for line in lines if not line.strip().startswith("root =")]
+
+    # Insert the new laptop-specific roots at the top
+    new_content = [local_root, remote_root] + filtered_lines
+
+    with open(profile_path, 'w') as f:
+        f.writelines(new_content)
+
+    print(f"Updated {profile_path} with laptop host.")
+
+if __name__ == "__main__":
+    update_unison_profile()

@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+msg="$(/home/c0mplex/.scripts/daily_verse)"
+
+fold -s -w 40 <<< "$msg"| boxes -d ansi -p a1

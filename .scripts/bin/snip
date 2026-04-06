@@ -1,0 +1,78 @@
+#!/bin/sh
+# Take screenshots for a region or the entire screen.
+
+SCREENSHOT_DIR="$(xdg-user-dir PICTURES)/screenshots"
+SCREENSHOT_FORMAT='+%Y-%m-%d_%H-%M-%S'
+
+snip_to() {
+    mode="$1"
+    x="$2"
+    y="$3"
+    width="$4"
+    height="$5"
+
+    case "$mode" in
+        clip)
+            message="The screenshot has been successfully saved to your clipboard."
+            output="-"
+            ;;
+        file)
+            output="$SCREENSHOT_DIR/$(date "$SCREENSHOT_FORMAT").png"
+            message="The screenshot has been successfully saved as $(echo "$output" | sed "s|$HOME|~|")."
+            ;;
+    esac
+
+    case "$XDG_SESSION_TYPE" in
+        x11)
+            shotgun -g "${width}x$height+$x+$y" "$output" | xclip -sel c -target image/png
+            ;;
+        wayland)
+            grim -g "$x,$y ${width}x$height" -c "$output" | wl-copy --type image/png
+            ;;
+        *)
+            echo "error: unsupported session type"
+            return 1
+            ;;
+    esac || return 1
+
+    notify-send \
+        --icon=accessories-screenshot-symbolic \
+        --expire-time=3000 \
+        "Snip" "$message"
+}
+
+case "$1" in
+    full | sel)
+        region="$1"
+        case "$2" in
+            file | clip) mode="$2" ;;
+            *)
+                echo "error: invalid mode passed"
+                exit 1
+                ;;
+        esac
+        ;;
+    *)
+        choices="\
+🖱 Selection
+💻 Entire Screen
+🖱 Selection (Copy)
+💻 Entire Screen (Copy)"
+
+        choice="$(echo "$choices" | dmenu -i -p "Screenshot:")" || exit
+        case "$choice" in
+            *Selection*) region="sel" ;;
+            *) region="full" ;;
+        esac
+
+        case "$choice" in
+            *Copy*) mode="clip" ;;
+            *) mode="file" ;;
+        esac
+        ;;
+esac
+
+selection="$(sel-area "$region")" || exit
+
+# shellcheck disable=SC2086
+snip_to "$mode" $selection || exit 1

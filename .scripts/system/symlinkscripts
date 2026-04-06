@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+fd --type x --search-path ~/.scripts/ \
+   --exclude ~/.scripts/usrbin/ | 
+
+#DESTINATIONPATH="$(echo "$SCRIPTS" | awk -F  '/' '{print $NF}')"
+while IFS= read -r i ; do 
+  scripts_source_file=$i
+  file=${i##*/}
+  destination_path="$HOME/.scripts/usrbin/$file"
+  if [ -L "$destination_path" ]; then
+    echo "$file found deleting"
+    rm "$destination_path"
+  else
+    echo "No file on destiny found creating $file symlink"
+    ln --symbolic "$scripts_source_file" "$destination_path"
+  fi
+done

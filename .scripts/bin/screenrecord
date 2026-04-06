@@ -1,0 +1,56 @@
+#!/bin/sh
+# Take screen recordings.
+
+CACHE_FILE="/tmp/record.pid"
+LOG_FILE="/tmp/record.log"
+RECORDING_DIR="$(xdg-user-dir VIDEOS)/recordings"
+
+record_region() {
+    [ $# -ne 4 ] && return 1
+
+    x_offset="$1"
+    y_offset="$2"
+    width="$3"
+    height="$4"
+
+    file="$(date '+%Y-%m-%d_%H-%M-%S').mp4"
+
+    case "$XDG_SESSION_TYPE" in
+        x11)
+            set -- ffmpeg -f x11grab -r 60 -s "${width}x${height}" \
+                -i "$DISPLAY+$x_offset,$y_offset"
+
+            # Use NVENC if GPU, if possible.
+            if [ "$(supergfxctl --get)" = "Hybrid" ]; then
+                set -- "$@" -c:v h264_nvenc
+            fi
+            ;;
+        wayland)
+            set -- wf-recorder -f
+            ;;
+    esac
+
+    "$@" "$RECORDING_DIR/$file" >"$LOG_FILE" 2>&1 &
+    echo "file=$file;pid=$!" >"$CACHE_FILE"
+}
+
+# Stop recording if cache file exists, otherwise start a new recording.
+if [ -f "$CACHE_FILE" ]; then
+    # shellcheck disable=1090
+    . "$CACHE_FILE"
+    # shellcheck disable=2154
+    kill -INT "$pid"
+    wait "$pid"
+
+    notify-send --icon=view-list-video-symbolic \
+        "Record" "The recording has been successfully saved as $file."
+
+    rm "$CACHE_FILE"
+else
+    selection="$(sel-area)" || exit 1
+
+    # shellcheck disable=SC2086
+    record_region $selection
+fi
+
+pkill -RTMIN+7 "$STATUSBAR"

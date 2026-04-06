@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+
+# Source the OS ID
+[[ -f /etc/os-release ]] && . /etc/os-release
+
+case "$ID" in
+    arch|artix)
+        PKM="sudo pacman -S --noconfirm"
+        ;;
+    debian|ubuntu|pop|mint)
+        PKM="sudo apt-get install -y"
+        sudo apt-get update -qq
+        ;;
+    fedora|nobara|amzn)
+        PKM="sudo dnf install -y"
+        ;;
+    void)
+        PKM="sudo xbps-install -Sy"
+        ;;
+    *)
+        echo "OS $ID not supported."
+        exit 1
+        ;;
+esac
+
+$PKM $1

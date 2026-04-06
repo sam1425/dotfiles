@@ -1,0 +1,33 @@
+#!/bin/bash
+
+ROUTER="192.168.1.1:8000"
+USER="admin"
+PASS="ibUqz6B9"
+COOKIE_FILE="/tmp/router_cookie.txt"
+
+# 1. Login to get the session cookie
+# Note: If this still returns "Empty reply", 
+# replace $PASS with $(echo -n "$PASS" | base64)
+curl -s -c "$COOKIE_FILE" \
+     -d "curWebPage=/te_wifi.asp" \
+     -d "loginUsername=$USER" \
+     -d "loginPassword=$PASS" \
+     "http://$ROUTER/cgi-bin/te_acceso_router.cgi" > /dev/null
+
+# 2. Get IPs
+GLOBAL_IP=$(curl -s https://api.ipify.org)
+LOCAL_IP="192.168.1.100"
+
+IFS='.' read -r ip1 ip2 ip3 ip4 <<< "$GLOBAL_IP"
+IFS='.' read -r lp1 lp2 lp3 lp4 <<< "$LOCAL_IP"
+
+# 3. Perform the NAT update using the cookie
+curl -k -b "$COOKIE_FILE" \
+     --referer "http://$ROUTER/nataddrmap.asp" \
+     --data "int_ip_addr-0=$lp1&int_ip_addr-1=$lp2&int_ip_addr-2=$lp3&int_ip_addr-3=$lp4" \
+     --data "ext_ip_addr-0=$ip1&ext_ip_addr-1=$ip2&ext_ip_addr-2=$ip3&ext_ip_addr-3=$ip4" \
+     --data "nat_intf_id=-1&tef_addr_mapping_id=-1" \
+     "http://$ROUTER/nataddrmap.asp"
+
+rm "$COOKIE_FILE"
+echo -e "\nUpdated Router to Global IP: $GLOBAL_IP"

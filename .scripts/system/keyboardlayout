@@ -1,0 +1,29 @@
+
+
+#!/bin/sh
+
+DMENU="dmenu -c -ct -l 3 -h 40"
+
+choice=$(printf "US\nEspañol\nFrançais\nFrançaisQY\nDvorak\nColemak\n" | $DMENU)
+
+case "$choice" in
+  US)
+    setxkbmap us
+    ;;
+  Español)
+    setxkbmap latam
+    ;;
+  Français)
+    setxkbmap fr
+    ;;
+  FrançaisQY)
+    setxkbmap us_qwerty-fr
+    ;;
+  Dvorak)
+    setxkbmap us dvorak
+    ;;
+  Colemak)
+    setxkbmap us colemak
+    ;;
+esac
+

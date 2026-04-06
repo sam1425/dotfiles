@@ -1,0 +1,18 @@
+#!/bin/sh
+# Wrapper script for controlling music across MPRIS players.
+# It mimics the CLI arguments of mpc.
+
+set -eu
+
+# shellcheck disable=2086
+case "$1" in
+    seek | volume)
+        [ "$1" = "seek" ] && subcmd="position"
+        set -- "${subcmd:-"$1"}" "${2#?}${2%%[[:digit:]]*}"
+        ;;
+    toggle) set -- play-pause ;;
+    prev) set -- previous ;;
+    current) set -- status ;;
+esac
+
+exec playerctl "$@"

@@ -7,7 +7,7 @@ These dotfiles modify and enhance the following:
 
 - **Shell**: [Zsh](.config/zsh) (w/ [Starship](.config/starship) & [Sheldon](.config/sheldon))
 - **WM**: [DWM](.files/suckless/dwm) & [i3](.config/i3)
-- **Terminal**: [Kitty](.config/kitty) & [ST](.files/suckless/stwithpatches)
+- **Terminal**: [ST](.files/suckless/stwithpatches) & [Kitty](.config/kitty)
 - **Editor**: [Emacs](.files/.emacs.d) & [Vim](.vim)
 - **File Manager**: [Yazi](.config/yazi)
 - **Monitor**: [btop](.config/btop)
@@ -26,16 +26,18 @@ This repo uses [GNU Stow](https://www.gnu.org/software/stow/) to manage symlinks
 ```bash
 # Clone the repo
 git clone https://github.com/c0mplex/dotfiles.git && cd dotfiles
+```
 
-# Install base dotfiles
+```
+# install base dotfiles (recomended)
 ./install
 
-# Install everything (base + system + .files)
+# or install everything (base + system + .files)
 ./install all
 ```
 
 ---
-*Feel free to copy what you like!*
+*feel free to copy what you like!*
 
-Credits:
+credits:
 - zsh config based on [yoru's](https://github.com/raexera/yoru)

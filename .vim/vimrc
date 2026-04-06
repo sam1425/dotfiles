@@ -151,6 +151,12 @@ nnoremap gf :e <cfile><CR>
 nnoremap <C-b> :term just<CR>
 nnoremap <leader>D a<C-R>=strftime("(%Y%m%d-%H%M%S)")<CR><Esc>
 
+function! ToggleTitleCase()
+    let save_cursor = getcurpos()
+    silent! %s/\<\(\w\)\(\w*\)\>/\u\1\L\2/g
+    call setpos('.', save_cursor)
+endfunction
+command! Uppercasefile call ToggleTitleCase()
 
 if !has('gui_running')
     set ttimeoutlen=10
