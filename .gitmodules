@@ -1,3 +1,6 @@
 [submodule ".files"]
 	path = .files
 	url = https://github.com/sam1425/backupfiles
+[submodule ".scripts/tmp/dmenu-scripts"]
+	path = .scripts/tmp/dmenu-scripts
+	url = https://github.com/debxp/dmenu-scripts.git
