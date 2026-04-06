@@ -24,11 +24,19 @@ These dotfiles modify and enhance the following:
 This repo uses [GNU Stow](https://www.gnu.org/software/stow/) to manage symlinks.
 
 ```bash
-# Clone the repo
-git clone https://github.com/c0mplex/dotfiles.git && cd dotfiles
+# Clone the repo with submodules
+git clone --recurse-submodules https://github.com/sam1425/dot_files.git && cd dotfiles
+# Initialize submodules
+git submodule update --init --recursive
 ```
 
+### Update Submodules
+To pull the latest changes for all submodules:
+```bash
+git submodule update --remote --recursive
 ```
+
+```bash
 # install base dotfiles (recomended)
 ./install
 
