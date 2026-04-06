@@ -6,21 +6,19 @@ Simple and fast. My personal dotfiles in my Linux machine.
 These dotfiles modify and enhance the following:
 
 - **Shell**: [Zsh](.config/zsh) (w/ [Starship](.config/starship) & [Sheldon](.config/sheldon))
-- **WM**: [i3](.config/i3) & [DWM](.files/suckless/dwm)
+- **WM**: [DWM](.files/suckless/dwm) & [i3](.config/i3)
 - **Terminal**: [Kitty](.config/kitty) & [ST](.files/suckless/stwithpatches)
-- **Editor**: [Vim](.vim) & [Emacs](.files/.emacs.d)
+- **Editor**: [Emacs](.files/.emacs.d) & [Vim](.vim)
 - **File Manager**: [Yazi](.config/yazi)
 - **Monitor**: [btop](.config/btop)
 - **Notifs**: [Dunst](.config/dunst)
 - **Compositor**: [Picom](.config/picom)
 
-## ✨ Highlights
+## Specs
 - **Fast**: Zsh loads in ~0.35s on old hardware.
-- **Custom**: Based on , tweaked for my flow.
+- **Custom**: tweaked for my workflow so don't expect an easy-to-use env.
 - **Scripts**: A collection of useful [tools](.files/.scripts) for daily tasks.
-- **Aliases**: Powerful shortcuts for package management, system maintenance, and more.
-
-<img width="659" height="57" alt="image" src="https://github.com/user-attachments/assets/cf6b9a07-8e27-4aa9-932a-53f2d85d41d9" />
+- **Aliases**: Shortcuts that i find useful for system maintenance, and terminal-focused workflow.
 
 ## Setup
 This repo uses [GNU Stow](https://www.gnu.org/software/stow/) to manage symlinks.
