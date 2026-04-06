@@ -3,7 +3,7 @@
 ## =============== ##
 
 function smart-k-up() {
-    if [[ -n "$_zsh_autosuggest_suggestion" ]]; then
+    if [[ -n "$_zsh_autosuggest_suggestion" || -n "$POSTDISPLAY" ]]; then
         zle autosuggest-accept
     elif [[ -n "${widgets[history-substring-search-up]}" ]]; then
         zle history-substring-search-up
@@ -39,7 +39,7 @@ function zvm_after_init() {
 
     zvm_bindkey vicmd 'd' '"_d'
     zvm_bindkey visual 'd' '"_d'
-    
+
     zvm_bindkey vicmd 'c' '"_c'
     zvm_bindkey visual 'c' '"_c'
 
@@ -67,7 +67,7 @@ function zvm_after_lazy_keybindings() {
 
         # Check if surround exists here
         local found=($(zvm_search_surround "$char"))
-        
+
         if [[ ${#found[@]} == 0 ]]; then
              # No quote here, seek forward
              local next=$(zvm_substr_pos "$BUFFER" "$char" $((CURSOR + 1)) true)
@@ -82,7 +82,7 @@ function zvm_after_lazy_keybindings() {
     zvm_define_widget zvm_quote_seeker
 
     # 2. Explicit Safe Bindings
-    
+
     # --- Double Quotes ---
     zvm_bindkey visual 'i"' zvm_quote_seeker
     zvm_bindkey visual 'a"' zvm_quote_seeker
