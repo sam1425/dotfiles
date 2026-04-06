@@ -38,7 +38,7 @@ alias psg="ps aux | grep -v grep | grep -i -e VSZ -e"
 alias md="mkdir -p"
 alias fm='yazi'
 alias pacin="pacman -Slq | fzf -m --preview 'cat <(pacman -Si {1}) <(pacman -Fl {1} | awk \"{print \$2}\")' | xargs -ro sudo pacman -S"
-alias paruin="paru -Slq | fzf -m --preview 'cat <(paru -Si {1}) <(paru -Fl {1} | awk \"{print \$2}\")' | xargs -ro  paru -S"
+alias paruin="paru -Slq | strings | fzf -m --preview 'paru -Si {1}; echo -e \"\nFILES:\"; paru -Fl {1} | awk \"{print \$2}\" | head -n 100' | xargs -ro paru -S"
 alias pacrem="pacman -Qq | fzf --multi --preview 'pacman -Qi {1}' | xargs -ro sudo pacman -Rns"
 alias mirrors="sudo reflector --latest 20 --protocol https --sort rate --save /etc/pacman.d/mirrorlist"
 alias pac="pacman -Q | fzf"
@@ -66,7 +66,7 @@ alias cp='cp -ivr'
 alias copy="xclip -selection clipboard -i"
 alias rmvr='rm -vr'
 alias xprop='xprop -id $(slop -f "%i" -b 2 -p -2 -c 0.2,0.51,0.45,1 2>/dev/null)'
-#Not so useful: 
+#Not so useful:
 #alias mkgrub='sudo grub-mkconfig -o /boot/grub/grub.cfg'
 #alias run='pnpm run'
 #alias trim_all="sudo fstrim -va"

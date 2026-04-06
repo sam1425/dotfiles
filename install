@@ -1,0 +1,56 @@
+#!/usr/bin/env bash
+# install - Symlink dotfiles using GNU Stow
+#
+# Usage: ./install [mode]
+#
+# Modes:
+#   sys  - Symlink system dotfiles from .files/system to the root (/) directory.
+#          Requires sudo privileges.
+#   all  - Symlink base dotfiles, system dotfiles, and everything in .files/.
+#   (none) - Default mode. Symlinks only base dotfiles in the current directory,
+#            ignoring the .files/ directory.
+#
+# This script will check for 'stow' and attempt to install it using the 
+# system's package manager if it is not installed.
+set -e
+
+if ! command -v stow &>/dev/null; then
+    echo "stow is not installed."
+    read -p "Press [Enter] to install stow, or Ctrl+C to cancel..."
+    
+    [[ -f /etc/os-release ]] && . /etc/os-release
+    case "$ID" in
+        arch|artix)
+            sudo pacman -S --noconfirm stow ;; debian|ubuntu|pop|mint)
+            sudo apt-get update -qq && sudo apt-get install -y stow ;;
+        fedora|nobara)
+            sudo dnf install -y stow ;;
+        void)
+            sudo xbps-install -Sy stow ;;
+        *)
+            echo "Package manager not supported. Please install 'stow' manually."
+            exit 1 ;;
+    esac
+fi
+
+MODE=$1
+
+if [[ "$MODE" == "sys" ]]; then
+    SYSTEMDIR=".files/system"
+    sudo stow --adopt -d $SYSTEMDIR -t / .
+    echo "System dotfiles Symlinked"
+elif [[ "$MODE" == "all" ]]; then
+    DIR="."
+    FULLDIR=".files"
+    SYSTEMDIR=".files/system"
+    stow --adopt -t ~ --ignore='.files' .
+    sudo stow --adopt -d $SYSTEMDIR -t / $DIR
+    stow --adopt --ignore='system' --ignore='suckless'-d "$FULLDIR" $DIR
+    echo "ALL Dotfiles Symlinked"
+    echo "do you want to install my personalized suckless tools? [y/n] "
+    exit 0
+else
+    DIR="."
+    stow --adopt -t ~ --ignore='.files' .
+    echo "Dotfiles Symlinked"
+fi

@@ -22,7 +22,6 @@ function smart-j-down() {
 
 
 # --- Binds ---
-# Vim plugin keybinds:
 function zvm_after_init() {
 
     zvm_define_widget smart-k-up
@@ -37,6 +36,14 @@ function zvm_after_init() {
 
     zvm_bindkey viins '^B' _sudo_command_line
     zvm_bindkey vicmd '^B' _sudo_command_line
+
+    zvm_bindkey vicmd 'd' '"_d'
+    zvm_bindkey visual 'd' '"_d'
+    
+    zvm_bindkey vicmd 'c' '"_c'
+    zvm_bindkey visual 'c' '"_c'
+
+    zvm_bindkey visual 'p' '"_dP'
 }
 
 function zvm_after_lazy_keybindings() {
@@ -118,12 +125,4 @@ function zvm_after_lazy_keybindings() {
     zvm_bindkey viopp  'i`' zvm_quote_seeker
     zvm_bindkey viopp  'a`' zvm_quote_seeker
 }
-# Add text object extension -- eg ci" da(:
-#autoload -U select-quoted
-#zle -N select-quoted
-#for m in visual viopp; do
-    #for c in {a,i}{\',\",\`}; do
-        #bindkey -M $m $c select-quoted
-    #done
-#done
 # vim:ft=zsh:nowrap

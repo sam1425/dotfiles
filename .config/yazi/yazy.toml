@@ -1,0 +1,9 @@
+[opener]
+edit = [
+    { run = 'vim "$@"', block = true, desc = "Edit with vim" }
+]
+
+[open]
+rules = [
+    { name = "*", use = "edit" }
+]

@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+# remove - Unlink dotfiles using GNU Stow
+#
+# Usage: ./remove [mode]
+#
+# Modes:
+#   sys  - Unlink system dotfiles from the root (/) directory.
+#          Requires sudo privileges.
+#   all  - Unlink base dotfiles, system dotfiles, and everything in .files/.
+#   (none) - Default mode. Unlinks only base dotfiles in the current directory.
+set -e
+
+MODE=$1
+
+if [[ "$MODE" == "sys" ]]; then
+    SYSTEMDIR="system"
+    sudo stow -D -t / "$SYSTEMDIR"
+    echo "System dotfiles unlinked"
+elif [[ "$MODE" == "all" ]]; then
+    DIR="."
+    FULLDIR=".files"
+    SYSTEMDIR="./.files/system"
+    stow -D --ignore="$FULLDIR" "$DIR"
+    sudo stow -D -t / -d $SYSTEMDIR
+    stow -D --ignore="$SYSTEMDIR" "$FULLDIR"
+    echo "ALL Dotfiles unlinked"
+    exit 0
+else
+    DIR="."
+    stow -D --ignore='.files' "$DIR"
+    echo "Dotfiles unlinked"
+fi
