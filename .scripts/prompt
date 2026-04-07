@@ -28,7 +28,7 @@ else
             export STARSHIP_CONFIG=~/.config/starship/starshipnocolors.toml
             ;;
         *)
-            help_msg
+            help
             return 1 2>/dev/null || exit 1
             ;;
     esac
