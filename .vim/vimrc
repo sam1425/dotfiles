@@ -138,13 +138,13 @@ nmap <C-j> <Plug>(VM-Add-Cursor-Down)
 autocmd BufEnter * if &filetype == "go" | setlocal noexpandtab
 autocmd BufNewFile,BufRead ?\+.c3 setf c
 
-nnoremap d "_d
-vnoremap d "_d
-nnoremap c "_c
-vnoremap c "_c
-vnoremap p "_dP
-nnoremap <leader>d d
-vnoremap <leader>d d
+"nnoremap d "_d
+"vnoremap d "_d
+"nnoremap c "_c
+"vnoremap c "_c
+"vnoremap p "_dP
+"nnoremap <leader>d d
+"vnoremap <leader>d d
 nnoremap ^ &
 nnoremap & ^
 nnoremap Y y$

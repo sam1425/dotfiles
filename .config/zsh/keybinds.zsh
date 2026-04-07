@@ -3,7 +3,9 @@
 ## =============== ##
 
 function smart-k-up() {
-    if [[ -n "$_zsh_autosuggest_suggestion" || -n "$POSTDISPLAY" ]]; then
+    if [[ $CURSOR -gt ${#BUFFER%%$'\n'*} && $BUFFER == *$'\n'* ]]; then
+        zle up-line
+    elif [[ -n "$_zsh_autosuggest_suggestion" || -n "$POSTDISPLAY" ]]; then
         zle autosuggest-accept
     elif [[ -n "${widgets[history-substring-search-up]}" ]]; then
         zle history-substring-search-up
@@ -13,7 +15,9 @@ function smart-k-up() {
 }
 
 function smart-j-down() {
-    if [[ -n "${widgets[history-substring-search-down]}" ]]; then
+    if [[ $BUFFER == *$'\n'* ]]; then
+        zle down-line
+    elif [[ -n "${widgets[history-substring-search-down]}" ]]; then
         zle history-substring-search-down
     else
         zle down-line-or-history
@@ -21,14 +25,17 @@ function smart-j-down() {
 }
 
 
+function zvm_escape_newline_indent() {
+    LBUFFER+=" \\"
+    zle accept-line
+}
+zle -N zvm_escape_newline_indent
+
 # --- Binds ---
 function zvm_after_init() {
 
     zvm_define_widget smart-k-up
     zvm_define_widget smart-j-down
-
-    #zvm_bindkey viins '^[[1;2C' self-insert
-    #zvm_bindkey viins '^[[13;2u' self-insert
 
     zvm_bindkey viins '^K' smart-k-up
     zvm_bindkey viins '^J' smart-j-down
@@ -45,14 +52,7 @@ function zvm_after_init() {
     zvm_bindkey viins '^H' vi-backward-kill-word
 
     #zvm_bindkey viins '^?' vi-backward-kill-word
-    zvm_escape_newline_indent() {
-        LBUFFER+=" \\"
-        LBUFFER+=$'\n'
-        LBUFFER+=$(printf "%*s" $PROMPT_INDENT_WIDTH "")
-        LBUFFER+="    "
-    }
-    
-    zle -N zvm_escape_newline_indent
+
     zvm_bindkey viins '^[[13;2u' zvm_escape_newline_indent
 }
 
@@ -79,60 +79,60 @@ function zvm_after_lazy_keybindings() {
         local found=($(zvm_search_surround "$char"))
 
         if [[ ${#found[@]} == 0 ]]; then
-             # No quote here, seek forward
-             local next=$(zvm_substr_pos "$BUFFER" "$char" $((CURSOR + 1)) true)
-             if [[ $next != -1 ]]; then
-                 CURSOR=$((next + 1))
-             fi
+            # No quote here, seek forward
+            local next=$(zvm_substr_pos "$BUFFER" "$char" $((CURSOR + 1)) true)
+            if [[ $next != -1 ]]; then
+                CURSOR=$((next + 1))
+            fi
         fi
 
         # Trigger ZVM action
         $widget "$action" "$char"
     }
-    zvm_define_widget zvm_quote_seeker
+zvm_define_widget zvm_quote_seeker
 
-    # 2. Explicit Safe Bindings
+# 2. Explicit Safe Bindings
 
-    # --- Double Quotes ---
-    zvm_bindkey visual 'i"' zvm_quote_seeker
-    zvm_bindkey visual 'a"' zvm_quote_seeker
-    zvm_bindkey vicmd  'vi"' zvm_quote_seeker
-    zvm_bindkey vicmd  'va"' zvm_quote_seeker
-    zvm_bindkey vicmd  'ci"' zvm_quote_seeker
-    zvm_bindkey vicmd  'ca"' zvm_quote_seeker
-    zvm_bindkey vicmd  'di"' zvm_quote_seeker
-    zvm_bindkey vicmd  'da"' zvm_quote_seeker
-    zvm_bindkey vicmd  'yi"' zvm_quote_seeker
-    zvm_bindkey vicmd  'ya"' zvm_quote_seeker
-    zvm_bindkey viopp  'i"' zvm_quote_seeker
-    zvm_bindkey viopp  'a"' zvm_quote_seeker
+# --- Double Quotes ---
+zvm_bindkey visual 'i"' zvm_quote_seeker
+zvm_bindkey visual 'a"' zvm_quote_seeker
+zvm_bindkey vicmd  'vi"' zvm_quote_seeker
+zvm_bindkey vicmd  'va"' zvm_quote_seeker
+zvm_bindkey vicmd  'ci"' zvm_quote_seeker
+zvm_bindkey vicmd  'ca"' zvm_quote_seeker
+zvm_bindkey vicmd  'di"' zvm_quote_seeker
+zvm_bindkey vicmd  'da"' zvm_quote_seeker
+zvm_bindkey vicmd  'yi"' zvm_quote_seeker
+zvm_bindkey vicmd  'ya"' zvm_quote_seeker
+zvm_bindkey viopp  'i"' zvm_quote_seeker
+zvm_bindkey viopp  'a"' zvm_quote_seeker
 
-    # --- Single Quotes ---
-    zvm_bindkey visual "i'" zvm_quote_seeker
-    zvm_bindkey visual "a'" zvm_quote_seeker
-    zvm_bindkey vicmd  "vi'" zvm_quote_seeker
-    zvm_bindkey vicmd  "va'" zvm_quote_seeker
-    zvm_bindkey vicmd  "ci'" zvm_quote_seeker
-    zvm_bindkey vicmd  "ca'" zvm_quote_seeker
-    zvm_bindkey vicmd  "di'" zvm_quote_seeker
-    zvm_bindkey vicmd  "da'" zvm_quote_seeker
-    zvm_bindkey vicmd  "yi'" zvm_quote_seeker
-    zvm_bindkey vicmd  "ya'" zvm_quote_seeker
-    zvm_bindkey viopp  "i'" zvm_quote_seeker
-    zvm_bindkey viopp  "a'" zvm_quote_seeker
+# --- Single Quotes ---
+zvm_bindkey visual "i'" zvm_quote_seeker
+zvm_bindkey visual "a'" zvm_quote_seeker
+zvm_bindkey vicmd  "vi'" zvm_quote_seeker
+zvm_bindkey vicmd  "va'" zvm_quote_seeker
+zvm_bindkey vicmd  "ci'" zvm_quote_seeker
+zvm_bindkey vicmd  "ca'" zvm_quote_seeker
+zvm_bindkey vicmd  "di'" zvm_quote_seeker
+zvm_bindkey vicmd  "da'" zvm_quote_seeker
+zvm_bindkey vicmd  "yi'" zvm_quote_seeker
+zvm_bindkey vicmd  "ya'" zvm_quote_seeker
+zvm_bindkey viopp  "i'" zvm_quote_seeker
+zvm_bindkey viopp  "a'" zvm_quote_seeker
 
-    # --- Backticks ---
-    zvm_bindkey visual 'i`' zvm_quote_seeker
-    zvm_bindkey visual 'a`' zvm_quote_seeker
-    zvm_bindkey vicmd  'vi`' zvm_quote_seeker
-    zvm_bindkey vicmd  'va`' zvm_quote_seeker
-    zvm_bindkey vicmd  'ci`' zvm_quote_seeker
-    zvm_bindkey vicmd  'ca`' zvm_quote_seeker
-    zvm_bindkey vicmd  'di`' zvm_quote_seeker
-    zvm_bindkey vicmd  'da`' zvm_quote_seeker
-    zvm_bindkey vicmd  'yi`' zvm_quote_seeker
-    zvm_bindkey vicmd  'ya`' zvm_quote_seeker
-    zvm_bindkey viopp  'i`' zvm_quote_seeker
-    zvm_bindkey viopp  'a`' zvm_quote_seeker
+# --- Backticks ---
+zvm_bindkey visual 'i`' zvm_quote_seeker
+zvm_bindkey visual 'a`' zvm_quote_seeker
+zvm_bindkey vicmd  'vi`' zvm_quote_seeker
+zvm_bindkey vicmd  'va`' zvm_quote_seeker
+zvm_bindkey vicmd  'ci`' zvm_quote_seeker
+zvm_bindkey vicmd  'ca`' zvm_quote_seeker
+zvm_bindkey vicmd  'di`' zvm_quote_seeker
+zvm_bindkey vicmd  'da`' zvm_quote_seeker
+zvm_bindkey vicmd  'yi`' zvm_quote_seeker
+zvm_bindkey vicmd  'ya`' zvm_quote_seeker
+zvm_bindkey viopp  'i`' zvm_quote_seeker
+zvm_bindkey viopp  'a`' zvm_quote_seeker
 }
 # vim:ft=zsh:nowrap
