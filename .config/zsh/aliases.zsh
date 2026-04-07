@@ -19,6 +19,7 @@ emacs() {
     xdotool key alt+1
 }
 alias vimacs="\emacs -nw"
+alias starprompt="source ~/.scripts/prompt"
 
 #Useful:
 alias c="printf '\033[2J\033[3J\033[1;1H'"

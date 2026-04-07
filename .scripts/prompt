@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+
+function help (){
+    echo "
+    Swaps the configuration of starship setting up the env variable
+
+    Usage:
+        ./prompt <config>
+    Possible:
+        simple
+        main
+        nocolor
+    "
+}
+
+if [[ -z $1 ]];then
+    help
+    return 0 2>/dev/null || exit 0
+else
+    case $1 in 
+        simple)
+            export STARSHIP_CONFIG=~/.config/starship/simple.toml
+            ;;
+        main)
+            export STARSHIP_CONFIG=~/.config/starship/starship.toml
+            ;;
+        nocolor)
+            export STARSHIP_CONFIG=~/.config/starship/starshipnocolors.toml
+            ;;
+        *)
+            help_msg
+            return 1 2>/dev/null || exit 1
+            ;;
+    esac
+fi
+

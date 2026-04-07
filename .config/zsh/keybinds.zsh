@@ -26,7 +26,13 @@ function smart-j-down() {
 
 
 function zvm_escape_newline_indent() {
+    if [[ $BUFFER != *$'\n'* ]]; then
+        local p="${BUFFER%% -*}"
+        [[ "$p" == "$BUFFER" ]] && p="${p%% *}"
+        _zvm_pad="${(l:$((${#p} + 1)):: :)}"
+    fi
     LBUFFER+=" \\"
+    zle -U "$_zvm_pad"
     zle accept-line
 }
 zle -N zvm_escape_newline_indent
@@ -54,6 +60,7 @@ function zvm_after_init() {
     #zvm_bindkey viins '^?' vi-backward-kill-word
 
     zvm_bindkey viins '^[[13;2u' zvm_escape_newline_indent
+    zvm_bindkey viins '^[[13;5u' zvm_escape_newline_indent
 }
 
 function zvm_after_lazy_keybindings() {
