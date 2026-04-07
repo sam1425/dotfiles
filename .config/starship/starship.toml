@@ -31,6 +31,7 @@ $line_break$character"""
 
 #$git_status\
 palette = 'gruvbox_dark'
+continuation_prompt = '[ ❯](bold fg:#fbf1c7) '
 
 [palettes.gruvbox_dark]
 color_fg0 = '#fbf1c7'

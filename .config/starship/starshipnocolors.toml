@@ -1,0 +1,95 @@
+"$schema" = 'https://starship.rs/config-schema.json'
+add_newline = false
+command_timeout = 400
+scan_timeout = 1000
+format = """
+$username\
+$hostname\
+$directory\
+$git_branch\
+${custom.git_dot}\
+$c$rust$golang$java$python\
+$time\
+$line_break$character"""
+
+palette = 'gruvbox_dark'
+[palettes.gruvbox_dark]
+color_fg0 = '#fbf1c7'
+color_fg  = '#ebdbb2'
+color_aqua = '#68936f'
+color_blue = '#458588'
+color_orange = '#d65d0e'
+color_purple = '#b16286'
+color_red = '#cc241d'
+color_yellow = '#d79921'
+
+[username]
+show_always = true
+style_user = "fg:color_fg0"
+style_root = "fg:color_fg0"
+format = '[$user ]($style)'
+
+[hostname]
+ssh_only = true
+format = '[@$hostname ]($style)'
+style = "fg:color_yellow bold"
+
+[directory]
+style = "bold fg:color_aqua"
+format = "[ $path ]($style)"
+truncation_length = 50
+truncation_symbol = "*/"
+
+[directory.substitutions]
+"Documents" = "🗃️"
+"Downloads" = "⇩"
+"Programming" = "<code>"
+
+[git_branch]
+symbol = "ⵖ "
+style = "fg:color_blue"
+format = '[$symbol$branch ]($style)'
+
+[custom.git_dot]
+command = '/home/c0mplex/Documents/Programming/c/slop/gitstatus'
+when    = 'git rev-parse --is-inside-work-tree 2>/dev/null'
+format  = '[$output ]($style)'
+style   = 'fg:color_blue'
+shell   = ['bash', '--noprofile', '--norc']
+
+[c]
+symbol = " "
+format = '[$symbol ]($style)'
+
+[rust]
+symbol = ""
+format = '[$symbol ]($style)'
+
+[golang]
+symbol = ""
+format = '[$symbol ]($style)'
+
+[java]
+symbol = ""
+format = '[$symbol ]($style)'
+
+[python]
+symbol = ""
+format = '[$symbol ]($style)'
+
+[time]
+disabled = false
+time_format = "%R"
+style = "fg:color_fg0"
+format = '[  $time ]($style)'
+
+[line_break]
+disabled = true
+
+[character]
+success_symbol = '[ ❯](bold fg:color_fg0)'
+error_symbol = '[ ❯](bold fg:color_red)'
+vimcmd_symbol = '[ ❮](bold fg:color_aqua)'
+vimcmd_replace_one_symbol = '[](bold fg:color_purple)'
+vimcmd_replace_symbol = '[](bold fg:color_purple)'
+vimcmd_visual_symbol = '[](bold fg:color_yellow)'

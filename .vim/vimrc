@@ -34,6 +34,7 @@ filetype plugin indent on
 set nocursorline
 set nocursorcolumn
 set number
+set ai
 set laststatus=0
 set tabstop=4
 "set linespace=4
