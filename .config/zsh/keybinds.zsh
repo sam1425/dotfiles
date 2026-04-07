@@ -27,6 +27,9 @@ function zvm_after_init() {
     zvm_define_widget smart-k-up
     zvm_define_widget smart-j-down
 
+    #zvm_bindkey viins '^[[1;2C' self-insert
+    #zvm_bindkey viins '^[[13;2u' self-insert
+
     zvm_bindkey viins '^K' smart-k-up
     zvm_bindkey viins '^J' smart-j-down
     zvm_bindkey vicmd '^K' smart-k-up
@@ -37,13 +40,20 @@ function zvm_after_init() {
     zvm_bindkey viins '^B' _sudo_command_line
     zvm_bindkey vicmd '^B' _sudo_command_line
 
-    zvm_bindkey vicmd 'd' '"_d'
-    zvm_bindkey visual 'd' '"_d'
+    zvm_bindkey viins '^W' vi-backward-kill-word
 
-    zvm_bindkey vicmd 'c' '"_c'
-    zvm_bindkey visual 'c' '"_c'
+    zvm_bindkey viins '^H' vi-backward-kill-word
 
-    zvm_bindkey visual 'p' '"_dP'
+    #zvm_bindkey viins '^?' vi-backward-kill-word
+    zvm_escape_newline_indent() {
+        LBUFFER+=" \\"
+        LBUFFER+=$'\n'
+        LBUFFER+=$(printf "%*s" $PROMPT_INDENT_WIDTH "")
+        LBUFFER+="    "
+    }
+    
+    zle -N zvm_escape_newline_indent
+    zvm_bindkey viins '^[[13;2u' zvm_escape_newline_indent
 }
 
 function zvm_after_lazy_keybindings() {

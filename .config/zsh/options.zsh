@@ -28,7 +28,10 @@ zstyle ':fzf-tab:complete:cd:*' fzf-preview 'exa -1 --color=always $realpath'
 zstyle ':fzf-tab:*' switch-group ',' '.'
 ## case insensitive path-completion
 zstyle ':completion:*' matcher-list '' 'm:{a-zA-Z}={A-Za-z}' 'r:|=*' 'l:|=* r:|=*'
-
+# delete behhaviour
+#zstyle ':zle:*' word-style separated
+# boundries of delete
+#zstyle ':zle:*' word-chars ' /=;@:{}.[]'
 
 # fix becaue compinit is very slow
 for dump in ~/.zcompdump(N.mh+24); do
@@ -55,6 +58,8 @@ done <<-EOF
 AUTOCD
 AUTO_MENU
 AUTO_PARAM_SLASH
+RE_MATCH_PCRE
+PROMPT_SUBST
 COMPLETE_IN_WORD
 NO_MENU_COMPLETE
 HASH_LIST_ALL
