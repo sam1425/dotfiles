@@ -71,6 +71,9 @@ alias xprop='xprop -id $(slop -f "%i" -b 2 -p -2 -c 0.2,0.51,0.45,1 2>/dev/null)
 #alias mkgrub='sudo grub-mkconfig -o /boot/grub/grub.cfg'
 #alias run='pnpm run'
 #alias trim_all="sudo fstrim -va"
+alias cpugetavail='cat /sys/devices/system/cpu/cpu*/cpufreq/scaling_available_governors'
+alias cpushowcurrent='cat /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor'
+alias cpusethigh='echo performance | sudo tee /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor'
 
 #Networking
 alias ports='netstat -tulanp'
