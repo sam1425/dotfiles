@@ -20,6 +20,10 @@ emacs() {
 }
 alias vimacs="\emacs -nw"
 alias starprompt="source ~/.scripts/prompt"
+keyboard() {
+    sudo systemd-hwdb update
+    sudo udevadm trigger /dev/input/event*
+}
 
 #Useful:
 alias c="printf '\033[2J\033[3J\033[1;1H'"
@@ -38,6 +42,7 @@ alias ....='\cd ../../../../'
 alias psg="ps aux | grep -v grep | grep -i -e VSZ -e"
 alias md="mkdir -p"
 alias fm='yazi'
+alias update='mirrors && sudo pacman -Syu'
 alias pacin="pacman -Slq | fzf -m --preview 'cat <(pacman -Si {1}) <(pacman -Fl {1} | awk \"{print \$2}\")' | xargs -ro sudo pacman -S"
 alias paruin="paru -Slq | strings | fzf -m --preview 'paru -Si {1}; echo -e \"\nFILES:\"; paru -Fl {1} | awk \"{print \$2}\" | head -n 100' | xargs -ro paru -S"
 alias pacrem="pacman -Qq | fzf --multi --preview 'pacman -Qi {1}' | xargs -ro sudo pacman -Rns"
