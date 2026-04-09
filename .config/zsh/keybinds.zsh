@@ -3,9 +3,7 @@
 ## =============== ##
 
 function smart-k-up() {
-    if [[ $CURSOR -gt ${#BUFFER%%$'\n'*} && $BUFFER == *$'\n'* ]]; then
-        zle up-line
-    elif [[ -n "$_zsh_autosuggest_suggestion" || -n "$POSTDISPLAY" ]]; then
+    if [[ -n "$_zsh_autosuggest_suggestion" || -n "$POSTDISPLAY" ]]; then
         zle autosuggest-accept
     elif [[ -n "${widgets[history-substring-search-up]}" ]]; then
         zle history-substring-search-up
@@ -15,9 +13,7 @@ function smart-k-up() {
 }
 
 function smart-j-down() {
-    if [[ $BUFFER == *$'\n'* ]]; then
-        zle down-line
-    elif [[ -n "${widgets[history-substring-search-down]}" ]]; then
+    if [[ -n "${widgets[history-substring-search-down]}" ]]; then
         zle history-substring-search-down
     else
         zle down-line-or-history
@@ -60,6 +56,7 @@ function zvm_after_init() {
     #zvm_bindkey viins '^?' vi-backward-kill-word
 
     zvm_bindkey viins '^[[13;2u' zvm_escape_newline_indent
+
     zvm_bindkey viins '^[[13;5u' zvm_escape_newline_indent
 }
 

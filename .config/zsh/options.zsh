@@ -7,9 +7,10 @@ zmodload zsh/zle
 zmodload zsh/zpty
 zmodload zsh/complist
 
-autoload -Uz colors
-colors
-# Completion
+#autoload -Uz colors
+#colors
+autoload -Uz add-zsh-hook
+
 ZCOMPDUMP="$ZSH_RAM_CACHE/.zcompdump"
 if [[ ! -f "$ZCOMPDUMP" && -f "$HOME/.zcompdump" ]]; then
   cp "$HOME/.zcompdump" "$ZCOMPDUMP"
@@ -17,7 +18,6 @@ fi
 
 autoload -Uz compinit
 if [[ -n "$ZCOMPDUMP"(#qN.mh+24) ]]; then
-  # Once a day, do a background audit instead of blocking
   (compinit -d "$ZCOMPDUMP" && zcompile "$ZCOMPDUMP") &!
   compinit -i -C -d "$ZCOMPDUMP"
 else
