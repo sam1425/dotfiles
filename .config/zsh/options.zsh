@@ -7,38 +7,24 @@ zmodload zsh/zle
 zmodload zsh/zpty
 zmodload zsh/complist
 
-autoload _vi_search_fix
 autoload -Uz colors
-autoload -U compinit
 colors
-
-zle -N _vi_search_fix
-zle -N _sudo_command_line
-
 # Completion
-# disable sort when completing `git checkout`
-zstyle ':completion:*:git-checkout:*' sort false
-# set descriptions format to enable group support
-zstyle ':completion:*:descriptions' format '[%d]'
-# set list-colors to enable filename colorizing
-zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
-# preview directory's content with exa when completing cd
-zstyle ':fzf-tab:complete:cd:*' fzf-preview 'exa -1 --color=always $realpath'
-# switch group using `,` and `.`
-zstyle ':fzf-tab:*' switch-group ',' '.'
-## case insensitive path-completion
-zstyle ':completion:*' matcher-list '' 'm:{a-zA-Z}={A-Za-z}' 'r:|=*' 'l:|=* r:|=*'
-# delete behhaviour
-#zstyle ':zle:*' word-style separated
-# boundries of delete
-#zstyle ':zle:*' word-chars ' /=;@:{}.[]'
+ZCOMPDUMP="$ZSH_RAM_CACHE/.zcompdump"
+if [[ ! -f "$ZCOMPDUMP" && -f "$HOME/.zcompdump" ]]; then
+  cp "$HOME/.zcompdump" "$ZCOMPDUMP"
+fi
 
-# fix becaue compinit is very slow
-for dump in ~/.zcompdump(N.mh+24); do
-  compinit
-done
-compinit -C
+autoload -Uz compinit
+if [[ -n "$ZCOMPDUMP"(#qN.mh+24) ]]; then
+  # Once a day, do a background audit instead of blocking
+  (compinit -d "$ZCOMPDUMP" && zcompile "$ZCOMPDUMP") &!
+  compinit -i -C -d "$ZCOMPDUMP"
+else
+  compinit -i -C -d "$ZCOMPDUMP"
+fi
 
+zle -N _sudo_command_line
 
 # History
 HISTFILE="$XDG_CACHE_HOME/zsh/.zhistory"
@@ -55,6 +41,7 @@ while read -r opt
 do 
   setopt $opt
 done <<-EOF
+EXTENDED_GLOB
 AUTOCD
 AUTO_MENU
 AUTO_PARAM_SLASH
@@ -91,9 +78,9 @@ NOMATCH
 EQUALS
 EOF
 
-command -v zoxide &>/dev/null && eval "$(zoxide init zsh --cmd cd)"
-
-
-
+if [[ ! -f "$ZSH_RAM_CACHE/zoxide_init.zsh" ]]; then
+  zoxide init zsh --cmd cd > "$ZSH_RAM_CACHE/zoxide_init.zsh"
+fi
+source "$ZSH_RAM_CACHE/zoxide_init.zsh"
 
 # vim:filetype=zsh:nowrap

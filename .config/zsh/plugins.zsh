@@ -5,7 +5,10 @@
 source /usr/share/fzf/completion.zsh
 source /usr/share/fzf/key-bindings.zsh
 
-eval "$(sheldon source)"
+if [[ ! -f "$ZSH_RAM_CACHE/sheldon_source.zsh" || "$XDG_CONFIG_HOME/sheldon/plugins.toml" -nt "$ZSH_RAM_CACHE/sheldon_source.zsh" ]]; then
+  sheldon source > "$ZSH_RAM_CACHE/sheldon_source.zsh"
+fi
+source "$ZSH_RAM_CACHE/sheldon_source.zsh"
 
 function man() {
   LESS_TERMCAP_mb=$'\e[1;31m' \
