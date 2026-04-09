@@ -1,8 +1,8 @@
 #!/bin/bash
-
 msg=$(/home/c0mplex/.scripts/system/daily_verse | fold -s -w 60)
 box_only=$(echo "$msg" | boxes -d ansi -p a2 -a c)
-
+msg=$(/home/c0mplex/.scripts/system/daily_verse | fold -s -w 60)
+box_only=$(echo "$msg" | boxes -d ansi -p a2 -a c)
 cat_raw=$(cat << 'EOF'
 ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣤⣦⡄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣠⣤⡀⠀⠀⠀⠀⠀⠀⠀
 ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣰⣿⣿⣷⡄⠀⠀⠀⠀⠀⠀⠀⠀⣰⣿⣿⣿⡄⠀⠀⠀⠀⠀⠀
@@ -29,29 +29,26 @@ cat_raw=$(cat << 'EOF'
 EOF
 )
 
-max_w=0
-while IFS= read -r line; do
-    (( ${#line} > max_w )) && max_w=${#line}
-done <<< "$cat_raw"
 
 term_w=$(tput cols)
 
-function print_block_centered {
-    local input="$1"
-    local block_w="$2"
-    local padding=$(( (term_w - block_w) / 2 ))
-    
-    printf -v spacer "%${padding}s" ""
-    
-    while IFS= read -r line; do
-        printf "%s%s\n" "$spacer" "$line"
-    done <<< "$input"
+print_centered() {
+    awk -v term_w="$term_w" '
+    {
+        # strip ANSI
+        s = $0
+        gsub(/\033\[[0-9;]*[mK]/, "", s)
+        if (length(s) > max_w) max_w = length(s)
+        lines[NR] = $0
+    }
+    END {
+        pad = int((term_w - max_w) / 2)
+        for (i = 1; i <= NR; i++) {
+            printf "%*s%s\n", pad, "", lines[i]
+        }
+    }
+    ' <<< "$1"
 }
 
-box_w=0
-while IFS= read -r line; do
-    (( ${#line} > box_w )) && box_w=${#line}
-done <<< "$box_only"
-
-print_block_centered "$box_only" "$box_w"
-print_block_centered "$cat_raw" "$max_w"
+print_centered "$box_only"
+print_centered "$cat_raw"
