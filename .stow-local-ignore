@@ -10,6 +10,7 @@ RCS
 \.git
 \.gitignore
 \.gitmodules
+\.files
 
 ^/README.*
 ^/LICENSE.*

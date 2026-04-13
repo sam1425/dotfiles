@@ -43,7 +43,7 @@ elif [[ "$MODE" == "all" ]]; then
     DIR="."
     FULLDIR=".files"
     SYSTEMDIR=".files/system"
-    stow --adopt -t ~ --ignore='.files' .
+    stow --adopt -t ~ .
     sudo stow --adopt -d $SYSTEMDIR -t / $DIR
     stow --adopt --ignore='system' --ignore='suckless'-d "$FULLDIR" $DIR
     echo "ALL Dotfiles Symlinked"

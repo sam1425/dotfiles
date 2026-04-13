@@ -13,7 +13,7 @@ autoload -Uz add-zsh-hook
 
 ZCOMPDUMP="$ZSH_RAM_CACHE/.zcompdump"
 if [[ ! -f "$ZCOMPDUMP" && -f "$HOME/.zcompdump" ]]; then
-  cp "$HOME/.zcompdump" "$ZCOMPDUMP"
+  cp "$HOME/.zcompdump" "$ZCOMPDUMP" >/dev/null 2>&1
 fi
 
 autoload -Uz compinit

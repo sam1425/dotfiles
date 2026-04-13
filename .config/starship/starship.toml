@@ -82,7 +82,7 @@ command = '/home/c0mplex/Documents/Programming/c/slop/gitstatus'
 when    = 'git rev-parse --is-inside-work-tree 2>/dev/null'
 format  = '[$output]($style)'
 style   = 'bg:color_blue'
-shell   = ['bash', '--noprofile', '--norc']
+shell   = ['sh', '--noprofile', '--norc']
 
 #[git_status]
 #style = "bg:color_blue"

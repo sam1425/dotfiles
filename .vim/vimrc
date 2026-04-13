@@ -25,12 +25,15 @@ augroup END
 autocmd FocusLost * call system('xclip -selection clipboard -in', @+)
 autocmd TextYankPost * call system('xclip -selection clipboard -in', @+)
 
+command! MakeTags !ctags -R .
+
 let g:uncrustify_config_path = expand('~/.config/uncrustify/uncrustify.cfg')
 let g:uncrustify_lang_c   = 'c'
 let g:uncrustify_lang_cpp = 'cpp'
 
 syntax on
 filetype plugin indent on
+set nocompatible
 set nocursorline
 set nocursorcolumn
 set number
@@ -59,6 +62,9 @@ set updatetime=300
 
 set list
 set listchars=tab:\ \ ,trail:·
+
+set path+=**
+set wildmenu
 
 set norelativenumber
 set undofile
@@ -151,6 +157,9 @@ nnoremap Y y$
 nnoremap gf :e <cfile><CR>
 nnoremap <C-b> :term just<CR>
 nnoremap <leader>D a<C-R>=strftime("(%Y%m%d-%H%M%S)")<CR><Esc>
+" Navigate the completion menu with Ctrl+j and Ctrl+k
+inoremap <expr> <C-j> pumvisible() ? "\<C-n>" : "\<C-j>"
+inoremap <expr> <C-k> pumvisible() ? "\<C-p>" : "\<C-k>"
 
 function! ToggleTitleCase()
     let save_cursor = getcurpos()

@@ -10,7 +10,7 @@ alias icat='kitten icat'
 alias lynx='lynx -vikeys'
 alias Prompt='PROMPT="%~ % "'
 alias emacst='emacsclient -a ''"'
-alias vim="echo 'just use emacs bro' && sleep 1 && vim"
+#alias vim="echo 'just use emacs bro' && sleep 1 && vim"
 emacs() {
     # Jump to Tag 2 in dwm
     xdotool key alt+2
@@ -38,7 +38,8 @@ alias untar='tar zxvf' # untar <archive_decompress> <file_list>
 alias zp='zip -r' # z <archive_compress> <file_list>
 alias sr='source ~/.config/zsh/env.zsh'
 alias ..="\cd .."
-alias ...='\cd ../../../'
+alias ...='\cd ../../'
+alias ....='\cd ../../../'
 alias ....='\cd ../../../../'
 alias psg="ps aux | grep -v grep | grep -i -e VSZ -e"
 alias md="mkdir -p"
