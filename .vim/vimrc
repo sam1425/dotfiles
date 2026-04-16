@@ -160,6 +160,7 @@ nnoremap <leader>D a<C-R>=strftime("(%Y%m%d-%H%M%S)")<CR><Esc>
 " Navigate the completion menu with Ctrl+j and Ctrl+k
 inoremap <expr> <C-j> pumvisible() ? "\<C-n>" : "\<C-j>"
 inoremap <expr> <C-k> pumvisible() ? "\<C-p>" : "\<C-k>"
+inoremap <C-h> <C-w>
 
 function! ToggleTitleCase()
     let save_cursor = getcurpos()
