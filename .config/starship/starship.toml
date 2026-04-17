@@ -29,9 +29,7 @@ $time\
 [ ](fg:color_bg1)\
 $line_break$character"""
 
-#$git_status\
 palette = 'gruvbox_dark'
-#continuation_prompt = '[ ❯](bold fg:#fbf1c7) '
 
 [palettes.gruvbox_dark]
 color_fg0 = '#fbf1c7'
@@ -74,28 +72,13 @@ truncation_symbol = "*/"
 symbol = "ⵖ "
 style = "bg:color_blue fg:color_fg0"
 format = '[ $symbol$branch ]($style)'
-#truncation_length = 20
-#truncation_symbol = "…"
 
 [custom.git_dot]
 command = '/home/c0mplex/Documents/Programming/c/slop/gitstatus'
-when    = 'git rev-parse --is-inside-work-tree 2>/dev/null'
 format  = '[$output]($style)'
 style   = 'bg:color_blue'
-shell   = ['sh', '--noprofile', '--norc']
-
-#[git_status]
-#style = "bg:color_blue"
-#format = '([ $all_status$ahead_behind ]($style))'
-#staged    = '[◉](bold yellow bg:color_blue)'    # full + ring = staged
-#modified  = '[◎](bold fg:color_purple bg:color_blue)'   # double ring = modified  
-#untracked = '[◌](bold white bg:color_blue)'     # dashed = untracked
-#deleted   = '[◍](bold red bg:color_blue)'       # half = deleted
-#ahead     = '[⇡](fg:color_aqua bg:color_blue)'
-#behind    = '[⇣](fg:color_aqua bg:color_blue)'
-#diverged  = '[⇕](fg:color_aqua bg:color_blue)'
-#conflicted = '[◈](bold red bg:color_blue)'      # diamond = conflict
-#up_to_date = '[●](bold green bg:color_blue)' 
+when    = 'true'
+shell   = []
 
 [c]
 symbol = " "
@@ -112,32 +95,10 @@ symbol = ""
 style = "bg:color_blue"
 format = '[[ $symbol( $version) ](fg:color_fg0 bg:color_blue)]($style)'
 
-[php]
-symbol = ""
-style = "bg:color_blue"
-format = '[[ $symbol( $version) ](fg:color_fg0 bg:color_blue)]($style)'
-disabled = true
-
-[java]
-symbol = ""
-style = "bg:color_blue"
-format = '[[ $symbol( $version) ](fg:color_fg0 bg:color_blue)]($style)'
-
-[haskell]
-symbol = ""
-style = "bg:color_blue"
-format = '[[ $symbol( $version) ](fg:color_fg0 bg:color_blue)]($style)'
-disabled = true
-
 [python]
 symbol = ""
 style = "bg:color_blue"
 format = '[[ $symbol( $version) ](fg:color_fg0 bg:color_blue2)]($style)'
-
-#[docker_context]
-#symbol = ""
-#style = "bg:color_bg3"
-#format = '[[ $symbol( $context) ](fg:#83a598 bg:color_bg3)]($style)'
 
 [time]
 disabled = false
@@ -153,10 +114,3 @@ disabled = false
 success_symbol = '[ ❯](bold fg:color_fg0)'
 error_symbol = '[ ❯](bold fg:color_red)'
 vimcmd_symbol = '[ ❮](bold fg:color_bg1)'
-vimcmd_replace_one_symbol = '[](bold fg:color_purple)'
-vimcmd_replace_symbol = '[](bold fg:color_purple)'
-vimcmd_visual_symbol = '[](bold fg:color_yellow)'
-
-
-
-
