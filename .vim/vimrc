@@ -9,9 +9,11 @@ Plug 'sheerun/vim-polyglot'
 Plug 'mg979/vim-visual-multi', {'branch': 'master'}
 Plug 'machakann/vim-highlightedyank'
 Plug 'cofyc/vim-uncrustify'
-Plug 'plasticboy/vim-markdown'
+Plug 'tpope/vim-commentary'
 
 call plug#end()
+
+"Plug 'plasticboy/vim-markdown'
 
 augroup uncrustify_maps
   autocmd!
@@ -140,6 +142,10 @@ let g:VM_maps['Exit'] = '<Esc>'
 
 nmap <C-k> <Plug>(VM-Add-Cursor-Up)
 nmap <C-j> <Plug>(VM-Add-Cursor-Down)
+" nmap <M-;> gcc
+" vmap <M-;> gc
+nmap <Esc>; gcc
+vmap <Esc>; gc
 
 autocmd BufEnter * if &filetype == "go" | setlocal noexpandtab
 autocmd BufNewFile,BufRead ?\+.c3 setf c
