@@ -25,6 +25,9 @@ keyboard() {
     sudo systemd-hwdb update
     sudo udevadm trigger /dev/input/event*
 }
+brightnessup(){
+    magick $1 -brightness -contrast 20x0 $1
+}
 #sudo() {
   #if [[ "$1" == "-e" ]]; then
     #shift

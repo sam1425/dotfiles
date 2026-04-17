@@ -11,6 +11,7 @@
 export ZSH_RAM_CACHE="/dev/shm/zsh-$USER"
 mkdir -p "$ZSH_RAM_CACHE"
 
+export COLORTERM=truecolor
 export COWPATH="$COWPATH:$HOME/.cowsay/cowfiles"
 export PNPM_HOME="$HOME/.local/share/pnpm"
 export PATH="$HOME/.spicetify:$PATH"
