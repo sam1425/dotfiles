@@ -25,8 +25,17 @@ keyboard() {
     sudo systemd-hwdb update
     sudo udevadm trigger /dev/input/event*
 }
+#sudo() {
+  #if [[ "$1" == "-e" ]]; then
+    #shift
+    #doas vim -u ~/.vim/vimrc "$@"
+  #else
+    #doas "$@"
+  #fi
+#}
 
 #Useful:
+alias exe="chmod +x"
 alias c="printf '\033[2J\033[3J\033[1;1H'"
 alias q="exit"
 alias open='xdg-open'

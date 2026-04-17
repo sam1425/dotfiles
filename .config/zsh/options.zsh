@@ -2,24 +2,31 @@
 ## ZSH Options
 ##
 
+setopt EXTENDED_GLOB
 umask 022
 zmodload zsh/zle
 zmodload zsh/zpty
 zmodload zsh/complist
 
-#autoload -Uz colors
-#colors
 autoload -Uz add-zsh-hook
 
 ZCOMPDUMP="$ZSH_RAM_CACHE/.zcompdump"
-if [[ ! -f "$ZCOMPDUMP" && -f "$HOME/.zcompdump" ]]; then
-  cp "$HOME/.zcompdump" "$ZCOMPDUMP" >/dev/null 2>&1
-fi
+
+# Completion settings
+zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}' 'r:|[._-]=* r:|=*' 'l:|=* r:|=*'
+zstyle ':completion:*' special-dirs true
+zstyle ':completion:*' use-cache yes
+zstyle ':completion:*' cache-path "$ZSH_RAM_CACHE/zcompcache"
+zstyle ':completion:*' menu select
+zstyle ':completion:*' rehash true
+zstyle ':completion:*' completer _expand _complete _ignored
+zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
 
 autoload -Uz compinit
-if [[ -n "$ZCOMPDUMP"(#qN.mh+24) ]]; then
-  (compinit -d "$ZCOMPDUMP" && zcompile "$ZCOMPDUMP") &!
-  compinit -i -C -d "$ZCOMPDUMP"
+if [[ -n ${ZCOMPDUMP}(#qN.mh+24) ]]; then
+  compinit -i -d "$ZCOMPDUMP"
+  # Compile dump file in background for next time
+  { zcompile "$ZCOMPDUMP" } &!
 else
   compinit -i -C -d "$ZCOMPDUMP"
 fi
@@ -41,7 +48,6 @@ while read -r opt
 do 
   setopt $opt
 done <<-EOF
-EXTENDED_GLOB
 AUTOCD
 AUTO_MENU
 AUTO_PARAM_SLASH
