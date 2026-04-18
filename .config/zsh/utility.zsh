@@ -157,6 +157,41 @@ cls() {
     fi
 }
 
+run() {
+    local file=$1
+    if [[ -z "$file" ]]; then
+        return 0
+    fi
+
+    if [[ ! -f "$file" ]]; then
+        echo "Error: File '$file' not found."
+        return 1
+    fi
+
+    local ext="${file##*.}"
+    local filename="${file%.*}"
+
+    case "$ext" in
+        clj)  clojure -M "$file" ;;
+        lisp) sbcl --script "$file" ;;
+        zig)  zig run "$file" ;;
+        odin) odin run "$file" -file ;;
+        js)   node "$file" ;;
+        cs)   mcs "$file" && mono "${filename}.exe" ;;
+        tcl)  tclsh "$file" ;;
+        c)    gcc "$file" -o "$filename" && ./"$filename" ;;
+        cpp)  g++ "$file" -o "$filename" && ./"$filename" ;;
+        go)   go run "$file" ;;
+        rs)   rustc "$file" && ./"$filename" ;;
+        py)   python3 "$file" ;;
+        rb)   ruby "$file" ;;
+        java) javac "$file" && java "$filename" ;;
+        lua)  lua "$file" ;;
+        sh)   bash "$file" ;;
+        *)    echo "Error: Unsupported extension '.$ext'" ;;
+    esac
+}
+
 # Usage: extract <file>
 # Description: extracts archived files / mounts disk images
 # Note: .dmg/hdiutil is macOS-specific.

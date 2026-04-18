@@ -84,9 +84,4 @@ NOMATCH
 EQUALS
 EOF
 
-if [[ ! -f "$ZSH_RAM_CACHE/zoxide_init.zsh" ]]; then
-  zoxide init zsh --cmd cd > "$ZSH_RAM_CACHE/zoxide_init.zsh"
-fi
-source "$ZSH_RAM_CACHE/zoxide_init.zsh"
-
 # vim:filetype=zsh:nowrap
