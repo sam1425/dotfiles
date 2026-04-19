@@ -167,6 +167,7 @@ nnoremap <leader>D a<C-R>=strftime("(%Y%m%d-%H%M%S)")<CR><Esc>
 inoremap <expr> <C-j> pumvisible() ? "\<C-n>" : "\<C-j>"
 inoremap <expr> <C-k> pumvisible() ? "\<C-p>" : "\<C-k>"
 inoremap <C-h> <C-w>
+nnoremap <C-t> xp
 
 function! ToggleTitleCase()
     let save_cursor = getcurpos()

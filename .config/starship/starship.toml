@@ -17,9 +17,6 @@ ${custom.git_dot}\
 $c\
 $rust\
 $golang\
-$php\
-$java\
-$haskell\
 $python\
 [](fg:color_blue2 bg:color_bg3)\
 $docker_context\

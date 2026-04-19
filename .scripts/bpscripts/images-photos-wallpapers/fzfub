@@ -34,9 +34,9 @@ case $2 in
 				ILABEL="[ᴀʟᴛ: 𝐣·ᴊᴘɢ 𝐩·ᴘɴɢ | ᴄᴛʀʟ: 𝐝·ᴅᴇʟ 𝐞·ᴇxɪғ 𝐛·ʙ&ᴡ 𝐰·ᴡᴛʀᴍᴀʀᴋ"
 				LABEL="𝐠·➡ɢɪᴍᴘ 𝐭·ᴛʀᴀɴsᴘᴀʀᴇɴᴛ 𝐟/𝐯·ғʟɪᴘ 𝐥·ʙʟᴋ 𝐡·ᴡʜᴛᴇ ʙᴏʀᴅʀ]" ;;
 		*c) # cliphist options
-				ILABEL="ᴄʟɪᴘʜɪsᴛ: ᴇɴᴛᴇʀ/ᴄᴛʀʟ-c: ᴄᴏᴘʏ"
+				ILABEL="ᴄʟɪᴘʜɪsᴛ: ᴇɴᴛᴇʀ/ᴄᴛʀʟ-c: ᴄᴏᴘʏ | ᴄᴛʀʟ-s/S: sᴀᴠᴇ(/ᴀs)"
 				LABEL="[ᴄᴛʀʟ g: ᴇᴅɪᴛ ɪɴ ɢɪᴍᴘ | d: ᴅᴇʟ | t: ᴛᴏ ᴛʀᴀɴsᴘᴀʀᴇɴᴛ]"
-				FZFARGS='enter:execute(cliphist copy {}),ctrl-c:execute(cliphist copy {}),ctrl-t:execute-silent(imgmgk transparencyrecopy {+}),ctrl-g:become(gimp {+} > /dev/null 2>&1),ctrl-d:execute(rm {} && notify-send {} deleted)' ;;	
+				FZFARGS='enter:execute(imgcliphist copy {}),ctrl-c:execute(imgcliphist copy {}),ctrl-s:execute(imgcliphist save {}),ctrl-S:execute(imgcliphist saveas {}),ctrl-t:execute-silent(imgmgk transparencyrecopy {+}),ctrl-g:become(gimp {+} > /dev/null 2>&1),ctrl-d:execute(rm {} && notify-send {} deleted)' ;;	
 		*) FZFARGS='ctrl-d:execute(rm -i {} && notify-send {} deleted)' ;; # normal options
 esac
 

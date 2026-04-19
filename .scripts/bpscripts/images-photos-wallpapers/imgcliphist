@@ -16,25 +16,50 @@
 
 hist=~/.cache/hist
 
-add() { # add copied image to history. my screenshot script is bound to this.
-		[ -e "$hist" ] || notify-send "creating directory $hist..."; mkdir -p $hist
-		isimg=$(xclip -selection clipboard -o -t targets | grep png)
+add() { # add image to history. can take file path as argument.
+		[ -e "$hist" ] || mkdir -p "$hist"
+		local timestamp=$(date '+%a_%b%d%y_%H%M%S')
+		local target="$hist/$timestamp.png"
 
-		[[ -n $isimg ]] && xclip -selection clipboard -t image/png -o > $hist/$(date '+%a_%b%d%y_%h%m%s').png && notify-send -i "$(ls -t | head -n 1)" " clipped img" ;}
+		if [[ -f "$1" ]]; then
+				cp "$1" "$target"
+		else
+				isimg=$(xclip -selection clipboard -o -t targets | grep png)
+				[[ -n $isimg ]] && xclip -selection clipboard -t image/png -o > "$target"
+		fi
+
+		[[ -f "$target" ]] && notify-send -i "$target" " clipped img"
+}
 
 link() { # my qutebrowser config has macro 'cc' bound to hint images + save selected to cliphist
-		wget -q "$2" -p $hist && notify-send " img saved" ;}
+		wget -q "$2" -P "$hist" && notify-send " img saved" ;}
 
 sel() { # select from clip history and re-copy to clipboard
-		st -f 'liberation mono:pixelsize=27' -c fzfmenu -n fzfmenu -t fzf -g "107x12-100+270" -e fzfub $hist c --tac ;}
+		st -f 'liberation mono:pixelsize=27' -c fzfmenu -n fzfmenu -t fzf -g "107x12-100+270" -e fzfub "$hist" c --tac ;}
 
 copy() { # my fzfub script has ctrl-c and enter bound to copy
-		[[ -n $(file -b --mime-type "$2" | grep png) ]] && xclip -i -selection clipboard -t image/png "$2" && notify-send -i $2 "reclipped img " ;}
+		[[ -n $(file -b --mime-type "$1" | grep png) ]] && xclip -i -selection clipboard -t image/png "$1" && notify-send -i "$1" "reclipped img " ;}
+
+saveas() { # save selected image to a user-specified location
+		local dest=$(echo "" | rofi -dmenu -p "Save to (full path):" -lines 0)
+		[[ -z "$dest" ]] && exit 0
+		mkdir -p "$(dirname "$dest")"
+		cp "$1" "$dest" && notify-send -i "$dest" "Saved to $dest"
+}
+
+save() { # save to a default location (e.g. Pictures/Screenshots)
+		local dest="${2:-$HOME/Pictures/Screenshots}"
+		mkdir -p "$dest"
+		local name=$(basename "$1")
+		cp "$1" "$dest/$name" && notify-send -i "$dest/$name" "Saved to $dest"
+}
 
 case "$1" in
-		add*) add "$@" ;; # add an image to history
+		add*) shift; add "$@" ;; # add an image to history
 		link*) link "$@" ;; # download an image from copied link, and add to history
 		sel*) sel "$@" ;; # selection menu
-		copy*) copy "$@" ;; # re-copy an image
+		copy*) shift; copy "$@" ;; # re-copy an image
+		saveas*) shift; saveas "$@" ;; # save as...
+		save*) shift; save "$@" ;; # save to default
 		*) printf "$0 | file: $hist\n\nimage clipboard history: requires fzf+ueberzugpp wrapper, xclip\nset terminal command in sel()\n\n" ; exit 0 ;;
 esac

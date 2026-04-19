@@ -23,24 +23,36 @@ post(){
                -fill white -undercolor "${WATERMARK_BG:-#00000080}" \
                -annotate +20+20 "${WATERMARK_TEXT:-$(date '+%Y-%m-%d %H:%M')}" "$FILE"
     fi
-    xclip -selection clipboard -t image/png -i "$FILE" && notify-send -i "$FILE" "Saved: $(basename "$FILE")"
-    command -v imgcliphist &>/dev/null && imgcliphist add
+
+    local action_msg="Screenshot Taken"
+    
+    if [[ "${MODE_COPY:-1}" == "1" ]]; then
+        xclip -selection clipboard -t image/png -i "$FILE"
+        action_msg="Copied & Saved"
+    else
+        action_msg="Saved (No Copy)"
+    fi
+
+    notify-send -i "$FILE" "$action_msg" "$(basename "$FILE")"
+    
+    # Always add to clip history
+    command -v imgcliphist &>/dev/null && imgcliphist add "$FILE"
+
+    # If not saving to gallery, remove the temp file (if it was temp)
+    # Actually, the script uses a fixed FILE path in OUTDIR.
 }
 
 colorpicker(){
-    check_deps magick xclip xdotool slop
-
-    slop -n -f "" >/dev/null 2>&1 || exit 0
-
-    eval "$(xdotool getmouselocation --shell 2>/dev/null)"
-
-    hex=$(magick x:root -crop "4x4+$((X-2))+$((Y-2))" +repage \
-          -resize 1x1\! -depth 8 txt:- 2>/dev/null \
-          | grep -om1 '#[0-9A-Fa-f]\{6\}')
-
-    [[ -z "$hex" ]] && exit 0
-    echo -n "$hex" | xclip -selection clipboard -i
-    notify-send "Color Picked" "$hex"
+    local bin="/home/c0mplex/.scripts/bpscripts/images-photos-wallpapers/pixpicker"
+    [[ -x "$bin" ]] || return 1
+    
+    # You can set CP_CURSOR to "cross", "tcross", or "ptr"
+    local hex=$("$bin" "${CP_CURSOR:-tcross}")
+    
+    if [[ -n "$hex" ]]; then
+        echo -n "$hex" | xclip -selection clipboard -i
+        notify-send "Color Picked" "$hex"
+    fi
 }
 
 capture_full(){ 
@@ -75,6 +87,13 @@ main(){
         full)    capture_full ;;
         window)  capture_window ;;
         hover)   capture_hover_window ;;
+        
+        # New Modes
+        save-full)      MODE_COPY=0 capture_full ;;
+        save-selection) MODE_COPY=0 capture_selection ;;
+        cwd-full)       OUTDIR="." FILE="./$(date +%Y%m%d_%H%M%S).png" MODE_COPY=0 capture_full ;;
+        cwd-selection)  OUTDIR="." FILE="./$(date +%Y%m%d_%H%M%S).png" MODE_COPY=0 capture_selection ;;
+        
         *)       capture_selection ;;
     esac
 }

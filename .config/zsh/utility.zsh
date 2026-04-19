@@ -183,11 +183,12 @@ run() {
         cpp)  g++ "$file" -o "$filename" && ./"$filename" ;;
         go)   go run "$file" ;;
         rs)   rustc "$file" && ./"$filename" ;;
-        py)   python3 "$file" ;;
+        py)   pypy "$file" ;;
         rb)   ruby "$file" ;;
         java) javac "$file" && java "$filename" ;;
         lua)  lua "$file" ;;
         sh)   bash "$file" ;;
+        nim)  nim c -r "$file" ;;
         *)    echo "Error: Unsupported extension '.$ext'" ;;
     esac
 }
