@@ -1,0 +1,12 @@
+[[plugin.deps]]
+use = "yazi-rs/plugins:jump-to-char"
+rev = "034efd6"
+hash = "7a4b4237223aaa94e589d1c01a23542a"
+
+[[plugin.deps]]
+use = "yazi-rs/plugins:smart-filter"
+rev = "034efd6"
+hash = "c887903a63a2ff520081b6d90a4b3392"
+
+[flavor]
+deps = []

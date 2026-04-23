@@ -71,7 +71,7 @@ style = "bg:color_blue fg:color_fg0"
 format = '[ $symbol$branch ]($style)'
 
 [custom.git_dot]
-command = '/home/c0mplex/Documents/Programming/c/slop/gitstatus'
+command = '/home/c0mplex/Documents/Programming/c/scratch/slop/gitstatus'
 format  = '[$output]($style)'
 style   = 'bg:color_blue'
 when    = 'true'
