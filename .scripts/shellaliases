@@ -22,3 +22,7 @@ emacs() {
     # Return to the tag you started from
     xdotool set_desktop "$current_tag"
 }
+
+calc() {
+    qalc "$@"
+}
