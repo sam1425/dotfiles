@@ -11,6 +11,16 @@ alias lynx='lynx -vikeys'
 alias Prompt='PROMPT="%~ % "'
 alias emacst='emacsclient -a ''"'
 #alias vim="echo 'just use emacs bro' && sleep 1 && vim"
+vim() {
+  if [[ $# -eq 1 && -d $1 ]]; then
+    local tmp=$(mktemp)
+    yazi "$1" --chooser-file="$tmp"
+    [[ -s $tmp ]] && command vim "$(cat $tmp)"
+    rm -f "$tmp"
+  else
+    command vim "$@"
+  fi
+}
 emacs() {
     # Jump to Tag 2 in dwm
     xdotool key alt+2
