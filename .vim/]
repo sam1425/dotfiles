@@ -142,6 +142,9 @@ let g:VM_maps['Exit'] = '<Esc>'
 
 nmap <C-k> <Plug>(VM-Add-Cursor-Up)
 nmap <C-j> <Plug>(VM-Add-Cursor-Down)
+" nmap <M-;> gcc
+" vmap <M-;> gc
+
 autocmd BufEnter * if &filetype == "go" | setlocal noexpandtab
 autocmd BufNewFile,BufRead ?\+.c3 setf c
 
@@ -163,21 +166,22 @@ inoremap <expr> <C-j> pumvisible() ? "\<C-n>" : "\<C-j>"
 inoremap <expr> <C-k> pumvisible() ? "\<C-p>" : "\<C-k>"
 inoremap <C-h> <C-w>
 nnoremap <C-t> xp
-
-" st workaround
+" nnoremap <M-j> :m .+1<CR>==
+" nnoremap <M-k> :m .-2<CR>==
+" vnoremap <M-j> :m '>+1<CR>gv=gv
+" vnoremap <M-k> :m '<-2<CR>gv=gv
 nmap <Esc>; gcc
 vmap <Esc>; gc
+" st workaround
 nmap <Esc>j :m .+1<CR>==
 nmap <Esc>k :m .-2<CR>==
 vmap <Esc>j :m '>+1<CR>gv=gv
 vmap <Esc>k :m '<-2<CR>gv=gv
 " kitty / terminals that send proper M-
-" nmap <M-;> gcc
-" vmap <M-;> gc
-" nnoremap <M-j> :m .+1<CR>==
-" nnoremap <M-k> :m .-2<CR>==
-" vnoremap <M-j> :m '>+1<CR>gv=gv
-" vnoremap <M-k> :m '<-2<CR>gv=gv
+nnoremap <M-j> :m .+1<CR>==
+nnoremap <M-k> :m .-2<CR>==
+vnoremap <M-j> :m '>+1<CR>gv=gv
+vnoremap <M-k> :m '<-2<CR>gv=gv
 
 function! ToggleTitleCase()
     let save_cursor = getcurpos()
