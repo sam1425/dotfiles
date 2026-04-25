@@ -4,7 +4,7 @@ export DISPLAY="${DISPLAY:-:0}"
 
 OUTDIR="${2:-$HOME/Pictures/Screenshots}"
 [[ -d "$OUTDIR" ]] || { notify-send "Screenshot dir not found: $OUTDIR"; exit 1; }
-FILE="$OUTDIR/$(date +%Y%m%d_%H%M%S).png"
+FILE="$OUTDIR/$(date +%d_%m_%y@%M).png"
 TMP=$(mktemp --suffix=.png); trap 'rm -f "$TMP"' EXIT
 
 check_deps() {
@@ -91,8 +91,8 @@ main(){
         # New Modes
         save-full)      MODE_COPY=0 capture_full ;;
         save-selection) MODE_COPY=0 capture_selection ;;
-        cwd-full)       OUTDIR="." FILE="./$(date +%Y%m%d_%H%M%S).png" MODE_COPY=0 capture_full ;;
-        cwd-selection)  OUTDIR="." FILE="./$(date +%Y%m%d_%H%M%S).png" MODE_COPY=0 capture_selection ;;
+        cwd-full)       OUTDIR="." FILE="./$(date +%d_%m_%y@%M).png" MODE_COPY=0 capture_full ;;
+        cwd-selection)  OUTDIR="." FILE="./$(date +%d_%m_%y@%M).png" MODE_COPY=0 capture_selection ;;
         
         *)       capture_selection ;;
     esac

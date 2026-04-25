@@ -10,6 +10,8 @@ Plug 'mg979/vim-visual-multi', {'branch': 'master'}
 Plug 'machakann/vim-highlightedyank'
 Plug 'cofyc/vim-uncrustify'
 Plug 'tpope/vim-commentary'
+Plug 'wikitopian/hardmode'
+Plug 'tpope/vim-surround'
 
 call plug#end()
 
@@ -193,5 +195,6 @@ if !has('gui_running')
     let &t_SR = "\<Esc>[4 q" " Replace
 endif
 
+autocmd VimEnter,BufNewFile,BufReadPost * silent! call HardMode()
 
 set fillchars=eob:\ 
