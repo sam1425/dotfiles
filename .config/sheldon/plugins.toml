@@ -27,6 +27,10 @@ apply = ["defer"]
 [templates]
 defer = "{% for file in files %}zsh-defer source \"{{ file }}\"\n{% endfor %}"
 
+[plugins.autojump]
+github = "wting/autojump"
+apply = ["defer"]
+
 [plugins.zsh-vi-mode]
 github = "jeffreytse/zsh-vi-mode"
 apply = ["defer"]

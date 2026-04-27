@@ -96,6 +96,8 @@ export STARSHIP_CONFIG="$HOME/.config/starship/starship.toml"
 #fix
 export DISABLE_AUTO_TITLE="true"
 
+#zoxide fix
+export _ZO_EXCLUDE_DIRS="$HOME:$HOME/.config/:$HOME/.local/*:$HOME:/Documents/:$HOME/Documents/Programming"
 # Pastel CLI 
 export PASTEL_COLOR_MODE=24bit
 # Fix LS_COLORS being unreadable.
