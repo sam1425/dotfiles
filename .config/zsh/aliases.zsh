@@ -12,6 +12,10 @@ alias Prompt='PROMPT="%~ % "'
 alias emacst='emacsclient -a ''"'
 #alias vim="echo 'just use emacs bro' && sleep 1 && vim"
 vim() {
+  local buf
+  buf=$(emacsclient -e "(buffer-name (window-buffer (frame-selected-window (selected-frame))))" 2>/dev/null)
+  [[ $buf == "\"$1\"" ]] && { xdotool key alt+2; return }
+
   if [[ $# -eq 1 && -d $1 ]]; then
     local tmp=$(mktemp)
     yazi "$1" --chooser-file="$tmp"
@@ -46,6 +50,13 @@ brightnessup(){
     #doas "$@"
   #fi
 #}
+make(){
+  if [ -f justfile ] || [ -f Justfile ]; then
+    just "$@"
+  else
+    make "$@"
+  fi
+}
 
 #Useful:
 alias exe="chmod +x"
