@@ -3,6 +3,10 @@ bgr() {
     feh --bg-scale "$(find ~/Pictures/wallpaper -type f | shuf -n1)"
 }
 
+xkillw(){
+    xdotool windowkill $(slop -f '%i') >/dev/null 2>&1
+}
+
 xpropw() {
     local id
     id=$(slop -f "%i" -b 2 -p -2 -c 0.2,0.51,0.45,1 2>/dev/null)
@@ -25,4 +29,8 @@ emacs() {
 
 calc() {
     qalc "$@"
+}
+
+run() {
+    ~/.scripts/funcrun
 }
