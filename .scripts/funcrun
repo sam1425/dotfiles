@@ -1,0 +1,5 @@
+#!/bin/sh
+FUNCS=~/.scripts/shellaliases
+
+choice=$(grep -o '^[a-z_]*()' "$FUNCS" | tr -d '()' | dmenu -p "run:")
+[ -n "$choice" ] && sh -c ". $FUNCS; $choice"
