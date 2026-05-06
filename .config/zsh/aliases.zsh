@@ -5,7 +5,7 @@ alias makec='clang -o exe'
 #especific for monogame engine
 alias mgcb_editor='dotnet mgcb-editor Content/Content.mgcb'
 #platform specific:
-alias bgr='feh --bg-scale "$(find ~/Pictures/wallpaper -type f | shuf -n1)"'
+bgr() { feh --bg-scale "$(command find ~/Pictures/wallpaper -type f | shuf -n1)"; }
 alias icat='kitten icat'
 alias lynx='lynx -vikeys'
 alias Prompt='PROMPT="%~ % "'
@@ -115,10 +115,12 @@ alias frecency='zoxide add ~/Documents/Programming >/dev/null 2>&1'
 #Networking
 alias ports='netstat -tulanp'
 
-#git specific:
-alias gitaliases='source "~/.config/zsh/specific/gitaliases.zsh"'
 #Miscelaneous:
 alias compresspdf="gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=/ebook -dNOPAUSE -dQUIET -dBATCH -sOutputFile=compressed.pdf"
 alias updatediscord='sudo pacman -Syy && sudo pacman -Sy discord && sh -c "$(curl -sS https://raw.githubusercontent.com/Vendicated/VencordInstaller/main/install.sh)"'
+
+#git specific:
+source "$HOME/.config/zsh/specific/gitaliases.zsh"
+alias gitalias='source "$HOME/.config/zsh/specific/gitaliases.zsh"'
 
 # vim:ft=zsh
