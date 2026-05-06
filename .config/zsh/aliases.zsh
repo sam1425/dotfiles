@@ -15,15 +15,7 @@ vim() {
   local buf
   buf=$(emacsclient -e "(buffer-name (window-buffer (frame-selected-window (selected-frame))))" 2>/dev/null)
   [[ $buf == "\"$1\"" ]] && { xdotool key alt+2; return }
-
-  if [[ $# -eq 1 && -d $1 ]]; then
-    local tmp=$(mktemp)
-    yazi "$1" --chooser-file="$tmp"
-    [[ -s $tmp ]] && command vim "$(cat $tmp)"
-    rm -f "$tmp"
-  else
     command vim "$@"
-  fi
 }
 emacs() {
     # Jump to Tag 2 in dwm
@@ -70,6 +62,10 @@ alias mktar='tar zcvf' # mktar <archive_compress>
 alias untar='tar zxvf' # untar <archive_decompress> <file_list>
 alias zp='zip -r' # z <archive_compress> <file_list>
 alias sr='source ~/.config/zsh/env.zsh'
+cz() {
+  local dir
+  dir=$(zoxide query -l | fzf --reverse --height 40%) && cd "$dir"
+}
 alias ..="\cd .."
 alias ...='\cd ../../'
 alias ....='\cd ../../../'

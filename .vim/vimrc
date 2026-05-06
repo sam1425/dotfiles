@@ -3,7 +3,7 @@
 " ======================
 call plug#begin()
 
-Plug 'morhetz/gruvbox'
+Plug 'sainnhe/gruvbox-material'
 Plug 'tribela/vim-transparent'
 Plug 'sheerun/vim-polyglot'
 Plug 'mg979/vim-visual-multi', {'branch': 'master'}
@@ -12,9 +12,11 @@ Plug 'cofyc/vim-uncrustify'
 Plug 'tpope/vim-commentary'
 Plug 'wikitopian/hardmode'
 Plug 'tpope/vim-surround'
+Plug 'yukimura1227/vim-yazi'
 
 call plug#end()
 
+"Plug 'morhetz/gruvbox'
 "Plug 'plasticboy/vim-markdown'
 
 augroup uncrustify_maps
@@ -28,7 +30,10 @@ augroup END
 "fix problem with st/vim comment if you are not on st
 autocmd FocusLost * call system('xclip -selection clipboard -in', @+)
 autocmd TextYankPost * call system('xclip -selection clipboard -in', @+)
-
+"If called on a directory then open yazi
+autocmd VimEnter * if argc() == 1 && isdirectory(argv(0)) |
+  \ call feedkeys(":Yazi\<CR>") |
+  \ endif
 command! MakeTags !ctags -R .
 
 let g:uncrustify_config_path = expand('~/.config/uncrustify/uncrustify.cfg')
@@ -60,6 +65,9 @@ set autoindent
 set autochdir
 set termguicolors
 set background=dark
+if (has("termguicolors"))
+  set termguicolors
+endif
 
 set signcolumn=yes
 set updatetime=300
@@ -90,9 +98,12 @@ augroup transparent_fixes
     autocmd ColorScheme * highlight StatusLineTerm   guibg=NONE ctermbg=NONE
     autocmd ColorScheme * highlight StatusLineTermNC guibg=NONE ctermbg=NONE
 augroup END
-let g:gruvbox_contrast_dark = 'hard'
-let g:gruvbox_transparent_bg = 1
-colorscheme gruvbox
+"let g:gruvbox_contrast_dark = 'hard'
+"let g:gruvbox_transparent_bg = 1
+let g:gruvbox_material_background = 'dark'
+let g:gruvbox_material_better_performance = 1
+let g:gruvbox_material_transparent_background = 1
+colorscheme gruvbox-material
 
 "Bash
 let g:is_bash = 1

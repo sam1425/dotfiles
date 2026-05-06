@@ -147,7 +147,11 @@ function git-svn(){
           echo "Use: git-svn <repository> <subdirectory>"
   fi
 }
-
+#default modifications
+command_not_found_handler(){
+    printf "\033[1;38;2;254;128;25m%s\033[0m not found\n" "$1"
+    return 127
+}
 # Smart clear function
 cls() {
     if [[ "$TERM" == "st"* ]]; then

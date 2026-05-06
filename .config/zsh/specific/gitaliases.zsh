@@ -93,6 +93,7 @@ alias gke='\gitk --all $(git log -g --pretty=%h) &!'
 #alias gl='git pull'
 alias gl='git pull --prune'
 alias glg='git log --stat'
+alias glog="git log --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(dim white)- %an%C(reset)%C(bold yellow)%d%C(reset)' --all"
 alias glgg='git log --graph'
 alias glgga='git log --graph --decorate --all'
 alias glgm='git log --graph --max-count=10'
