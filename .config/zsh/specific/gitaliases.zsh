@@ -191,5 +191,29 @@ alias gupav='git pull --rebase --autostash -v'
 alias gupv='git pull --rebase -v'
 alias gwch='git whatchanged -p --abbrev-commit --pretty=medium'
 alias gwip='git add -A; git rm $(git ls-files --deleted) 2> /dev/null; git commit --no-verify --no-gpg-sign -m "--wip-- [skip ci]"'
+gadd() {
+  # Get modified, untracked, and deleted files
+  local files
+  files=$(git status --porcelain | awk '{print $2}')
+  
+  if [ -z "$files" ]; then
+    echo "No files to stage."
+    return 0
+  fi
 
+  # Choose files to stage using gum choose with a preview of git diff
+  local selected
+  selected=$(echo "$files" | gum choose --no-limit \
+    --header "Select files to stage (Space to select, Enter to confirm):" \
+    --selected.foreground "212" \
+    --cursor.foreground "212" \
+    --selected="none" \
+    --height 15)
+
+  # Stage selected files
+  if [ -n "$selected" ]; then
+    echo "$selected" | xargs git add
+    echo "Staged successfully."
+  fi
+}
 #

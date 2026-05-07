@@ -59,7 +59,7 @@ int main(int argc, char *argv[]) {
         else if (strcmp(argv[1], "ptr") == 0) CursorFont = XC_left_ptr;
         else if (strcmp(argv[1], "cross") == 0) CursorFont = XC_crosshair;
         else {CursorFont = XC_crosshair;}
-        print_help();
+        /* print_help(); */
     }
     Cursor cursor = XCreateFontCursor(d, CursorFont);
 
