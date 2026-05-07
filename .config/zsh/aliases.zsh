@@ -15,7 +15,7 @@ vim() {
   local buf
   buf=$(emacsclient -e "(buffer-name (window-buffer (frame-selected-window (selected-frame))))" 2>/dev/null)
   [[ $buf == "\"$1\"" ]] && { xdotool key alt+2; return }
-    command vim "$@"
+   command vim "$@"
 }
 emacs() {
     # Jump to Tag 2 in dwm
@@ -111,6 +111,9 @@ alias cpugetavail='cat /sys/devices/system/cpu/cpu*/cpufreq/scaling_available_go
 alias cpushowcurrent='cat /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor'
 alias cpusethigh='echo performance | sudo tee /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor'
 alias frecency='zoxide add ~/Documents/Programming >/dev/null 2>&1'
+whoown(){
+    pacman -Qo $@
+}
 
 #Networking
 alias ports='netstat -tulanp'
@@ -118,6 +121,9 @@ alias ports='netstat -tulanp'
 #Miscelaneous:
 alias compresspdf="gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=/ebook -dNOPAUSE -dQUIET -dBATCH -sOutputFile=compressed.pdf"
 alias updatediscord='sudo pacman -Syy && sudo pacman -Sy discord && sh -c "$(curl -sS https://raw.githubusercontent.com/Vendicated/VencordInstaller/main/install.sh)"'
+unison(){
+    command unison $@ -auto
+}
 
 #git specific:
 source "$HOME/.config/zsh/specific/gitaliases.zsh"

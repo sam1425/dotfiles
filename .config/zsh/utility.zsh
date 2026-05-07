@@ -164,11 +164,16 @@ cls() {
 run() {
     local file=$1
     if [[ -z "$file" ]]; then
+        if [ -f justfile ] || [ -f Justfile ]; then
+            just "${@}"
+        else
+            make "${@}"
+        fi
         return 0
     fi
 
-    if [[ ! -f "$file" ]]; then
-        echo "Error: File '$file' not found."
+    if [[ ! -f "$file" ]] || [[ -d "$file" ]]; then
+        printf "\033[31;1;4mError:\033[0m File %s not found.\n" "$file"
         return 1
     fi
 

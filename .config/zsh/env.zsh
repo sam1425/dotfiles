@@ -47,22 +47,20 @@ export XDG_PICTURES_DIR="$HOME/Pictures"
 export XDG_VIDEOS_DIR="$HOME/Videos"
 
 ## Comment this to use normal manpager
-export MANPAGER='nvim +Man! +"set nocul" +"set noshowcmd" +"set noruler" +"set noshowmode" +"set laststatus=0" +"set showtabline=0" +"set nonumber"'
-
-if [ $(echo $MANPAGER | awk '{print $1}') = nvim ]; then
-  export LESS="--RAW-CONTROL-CHARS"
-  export MANPAGER="less -s -M +Gg"
-
-  export LESS_TERMCAP_mb=$'\e[1;32m'
-  export LESS_TERMCAP_md=$'\e[1;32m'
-  export LESS_TERMCAP_me=$'\e[0m'
-  export LESS_TERMCAP_se=$'\e[0m'
-  export LESS_TERMCAP_so=$'\e[01;33m'
-  export LESS_TERMCAP_ue=$'\e[0m'
-  export LESS_TERMCAP_us=$'\e[1;4;31m'
-fi
-
-# FZF bases
+#export MANPAGER='nvim +Man! +"set nocul" +"set noshowcmd" +"set noruler" +"set noshowmode" +"set laststatus=0" +"set showtabline=0" +"set nonumber"'
+#export MANPAGER="sh -c 'col -bx | bat -l man -p'"
+export MANPAGER="less -s -M +Gg"
+export LESS="--RAW-CONTROL-CHARS"
+export GROFF_NO_SGR=1
+# Gruvbox Material 
+export LESS_TERMCAP_mb=$'\033[38;5;167m'           # blink     → red
+export LESS_TERMCAP_md=$'\033[1;38;5;208m'          # bold      → orange  (section headers)
+export LESS_TERMCAP_me=$'\033[0m'                   # end bold/blink
+export LESS_TERMCAP_so=$'\033[38;5;235;48;5;179m'  # standout  → dark on yellow (search highlight)
+export LESS_TERMCAP_se=$'\033[0m'                   # end standout
+export LESS_TERMCAP_us=$'\033[38;5;108;4m'         # underline → sage green  (param names)
+export LESS_TERMCAP_ue=$'\033[0m'                   # end underline 
+#FZF bases
 export FZF_DEFAULT_OPTS="
 
   --color fg:#ebdbb2
