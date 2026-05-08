@@ -1,7 +1,7 @@
 ## Aliases
 
 #especific for c development
-alias makec='clang -o exe'
+alias makec='cc -o exe'
 #especific for monogame engine
 alias mgcb_editor='dotnet mgcb-editor Content/Content.mgcb'
 #platform specific:
@@ -34,14 +34,7 @@ keyboard() {
 brightnessup(){
     magick $1 -brightness -contrast 20x0 $1
 }
-#sudo() {
-  #if [[ "$1" == "-e" ]]; then
-    #shift
-    #doas vim -u ~/.vim/vimrc "$@"
-  #else
-    #doas "$@"
-  #fi
-#}
+
 make(){
   if [ -f justfile ] || [ -f Justfile ]; then
     just "$@"
@@ -117,13 +110,18 @@ whoown(){
 
 #Networking
 alias ports='netstat -tulanp'
+alias myip="curl -s ifconfig.me"
+globalip(){
+    diff <(myip) <(dig +short iduai.duckdns.org)
+}
 
 #Miscelaneous:
 alias compresspdf="gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=/ebook -dNOPAUSE -dQUIET -dBATCH -sOutputFile=compressed.pdf"
-alias updatediscord='sudo pacman -Syy && sudo pacman -Sy discord && sh -c "$(curl -sS https://raw.githubusercontent.com/Vendicated/VencordInstaller/main/install.sh)"'
+alias updatediscord='sudo pacman -Sy discord && sh -c "$(curl -sS https://raw.githubusercontent.com/Vendicated/VencordInstaller/main/install.sh)"'
 unison(){
     command unison $@ -auto
 }
+alias fonts="fc-list : family | cut -d, -f1 | sort -u | fzf"
 
 #git specific:
 source "$HOME/.config/zsh/specific/gitaliases.zsh"
