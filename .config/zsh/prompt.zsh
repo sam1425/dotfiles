@@ -33,6 +33,6 @@ continuation_line() {
 add-zsh-hook precmd continuation_line
 
 # cursor (|) at startup
-# printf '\e[5 q'
+printf '\e[5 q'
 
 # vim:ft=zsh

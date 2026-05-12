@@ -39,7 +39,7 @@ make(){
   if [ -f justfile ] || [ -f Justfile ]; then
     just "$@"
   else
-    make "$@"
+    command make "$@"
   fi
 }
 
