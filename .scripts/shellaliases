@@ -34,3 +34,37 @@ calc() {
 run() {
     ~/.scripts/funcrun
 }
+
+update() {
+    notify-send "System Update" "Starting upgrade..."
+
+    if pkexec pacman -Syu --noconfirm; then
+        notify-send -u normal "System Update" "Upgrade complete."
+    else
+        notify-send -u critical "System Update" "Upgrade failed with $?."
+    fi
+}
+
+update_system() {
+    PASS=$(printf "" | dmenu -p "sudo password:")
+    
+    # Validate credentials and cache them (-v = validate only, no command)
+    echo "$PASS" | sudo -S -v 2>/dev/null
+    local auth=$?
+    unset PASS
+
+    if [ $auth -ne 0 ]; then
+        notify-send -u critical "System Update" "Authentication failed."
+        return 1
+    fi
+
+    # Now run pacman normally — sudo uses its cached credentials
+    # Terminal stdin is fully available for [Y/n] prompts
+    sudo pacman -Syu --noconfirm
+
+    if [ $? -eq 0 ]; then
+        notify-send -u normal "System Update" "Update completed."
+    else
+        notify-send -u critical "System Update" "Update failed."
+    fi
+}
