@@ -10,12 +10,14 @@ Plug 'mg979/vim-visual-multi', {'branch': 'master'}
 Plug 'machakann/vim-highlightedyank'
 Plug 'cofyc/vim-uncrustify'
 Plug 'tpope/vim-commentary'
-Plug 'wikitopian/hardmode'
+Plug 'takac/vim-hardtime'
+Plug 'rhysd/clever-f.vim'
 Plug 'tpope/vim-surround'
 Plug 'yukimura1227/vim-yazi'
+Plug 'wellle/targets.vim'
 
 call plug#end()
-
+"Plug 'wikitopian/hardmode'
 "Plug 'morhetz/gruvbox'
 "Plug 'plasticboy/vim-markdown'
 
@@ -206,6 +208,6 @@ if !has('gui_running')
     let &t_SR = "\<Esc>[4 q" " Replace
 endif
 
-autocmd VimEnter,BufNewFile,BufReadPost * silent! call HardMode()
+let g:hardtime_default_on = 1
 
 set fillchars=eob:\ 
