@@ -68,3 +68,7 @@ update_system() {
         notify-send -u critical "System Update" "Update failed."
     fi
 }
+
+dict(){
+    curl -LSs dict.org/d:$@
+}

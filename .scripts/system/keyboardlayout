@@ -14,10 +14,10 @@ case "$choice" in
     setxkbmap latam
     ;;
   Français)
-    setxkbmap fr
-    ;;
-  FrançaisQY)
     setxkbmap us_qwerty-fr
+    ;;
+  FrançaisAZ)
+    setxkbmap fr
     ;;
   Dvorak)
     setxkbmap us dvorak

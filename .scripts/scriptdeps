@@ -1,8 +1,178 @@
-slop
-maim
-imagemagick
-xrandr
-xorg-xset
-fd
-dysk
-shellcheck
+# Necessary Arch Linux Packages
+# Compiled based on ~/Documents/Programming, ~/.scripts, and ~/dotfiles
+
+## Programming Languages & Runtimes
+base-devel         # C/C++ toolchain (gcc, make, etc.)
+cmake              # Build system
+gdb                # Debugger
+gf2
+valgrind           # Memory profiling
+python-pipx        #
+python-matplotlib  # For data viz projects
+rust               # Rust language
+rustup             # Rust toolchain manager
+cargo              # Rust package manager
+go                 # Go language
+nodejs             # JavaScript runtime
+npm                # Node package manager
+typescript         # TypeScript compiler
+zig                # Zig language
+0d1n               # Odin language
+hare               # Hare language
+nim                # Nim language
+dart               # Dart language
+elixir             # Elixir language
+erlang             # Erlang/OTP
+ruby               # Ruby language
+jdk-openjdk        # Java Development Kit
+clojure            # Clojure language
+babashka-bin       # Native Clojure scripting
+sbcl               # Steel Bank Common Lisp
+lua                # Lua language
+luarocks           # Lua package manager
+tcl                # Tcl/Tk
+dotnet-sdk         # .NET Development
+vala               # Vala language
+gforth             # Gforth (Forth language)
+ocaml              # OCaml language
+dmd                # D language compiler
+processing-bin     # Processing (AUR)
+emscripten         # WebAssembly toolchain
+wabt               # WebAssembly Binary Toolkit
+nasm               # x86 Assembly
+yasm               # x86 Assembly
+shellcheck         # Shell script analysis
+
+## Shell & Terminal Environment
+zsh                # Primary shell
+starship           # Shell prompt
+sheldon            # Zsh plugin manager
+zoxide             # Better cd
+fzf                # Fuzzy finder
+eza                # Modern ls
+bat                # Modern cat
+fd                 # Modern find
+ripgrep            # Modern grep
+the_silver_searcher # ag
+kitty              # Primary terminal
+tmux               # Terminal multiplexer
+stow               # Dotfile management
+fastfetch          # System info
+tldr               # Simplified man pages
+
+## Desktop Environment & Window Management
+dwm                # Suckless window manager
+i3-wm              # i3 window manager
+i3blocks           # Status bar for i3
+i3status-rust      # Modern i3 status bar
+picom              # Window compositor
+dunst              # Notification daemon
+dmenu              # Suckless menu/launcher
+rofi               # Window switcher/launcher
+feh                # Wallpaper & image viewer
+maim               # Screenshot tool
+slop               # Region selection for screenshots
+xclip              # Clipboard manager
+clipmenu           # Clipboard history
+xdotool            # X11 automation
+xdo                # X11 utility
+brightnessctl      # Screen brightness control
+playerctl          # Media control
+pamixer            # Audio control
+pavucontrol        # PulseAudio volume control
+pipewire           # Modern audio/video server
+pipewire-pulse     # PulseAudio compatibility for PipeWire
+dwmblocks          # Status bar for dwm
+
+## System Tools & Utilities
+btop               # System monitor
+cronie             # Cron daemon
+reflector          # Pacman mirror optimization
+paru               # AUR helper
+curl               # Data transfer tool
+wget               # Data download tool
+inetutils          # Network utilities
+net-tools          # Networking tools
+wireshark-qt       # Network protocol analyzer
+yazi               # Terminal file manager
+nemo               # GUI file manager
+fff                # alternative to yazi
+docker             # Containerization
+ineutils
+net-tools
+
+## Editors & IDEs
+emacs              # Extensible editor
+gvim               # GUI Vim
+neovim             # Modern Vim
+visual-studio-code-bin # VS Code (AUR)
+sublime-text-4     # Sublime Text
+zed                # High-performance editor
+
+## Major Applications
+firefox            # Web browser
+librewolf-bin      # Privacy-focused browser
+chromium           # Open-source browser
+qutebrowser        # Keyboard-driven browser
+discord            # Communication
+zoom               # Video conferencing
+spotify            # Music streaming
+spotify-tui-bin    # Terminal Spotify client
+spicetify-cli      # Spotify customization
+mpv                # Media player
+vlc                # Media player
+audacity           # Audio editor
+audacious          # Audio player
+gimp               # Image editor
+inkscape           # Vector graphics editor
+aseprite-than      # Pixel art tool (AUR)
+fontforge          # Font editor
+darktable          # RAW photo editor
+obs-studio         # Recording/streaming
+obsidian           # Note taking
+zeal               # Offline documentation
+libreoffice        # Office suite
+git                # Version control
+gh                 # GitHub CLI
+lazygit            # Terminal Git UI
+ctags              # Code indexing
+pass               # Password manager
+rbw                # Bitwarden CLI
+godot              # Game engine
+heroic-games-launcher-bin # Game launcher
+
+## Script Dependencies (from ~/.scripts)
+imagemagick        # Image manipulation
+xrandr             # Display configuration
+xorg-xset          # X11 settings
+dysk               # Disk info
+qalc               # libqalculate (calc)
+ghostscript        # PDF/PS tools
+tar                # Archive utility
+gs                 # Ghostscript
+
+## Additional Script Dependencies (Identified from ~/.scripts code)
+amixer             # ALSA mixer (audio)
+calcurse           # Calendar/scheduling
+dict               # Dictionary protocol client
+exiftool           # perl-image-exiftool (metadata)
+ffmpeg             # Multimedia processing
+fortune-mod        # Random quotes
+httpie             # Modern curl alternative
+hyprctl            # Hyprland control
+light              # Backlight control
+monitor-sensor     # iio-sensor-proxy (orientation)
+nmcli              # NetworkManager CLI
+nsxiv              # Image viewer
+nvidia-smi         # NVIDIA monitoring
+powerprofilesctl   # Power management
+sd                 # sed alternative (Rust)
+lm_sensors         # sensors (Hardware monitoring)
+slock              # Suckless screen locker
+tesseract          # OCR (for screentotext scripts)
+timewarrior        # timew (Time tracking)
+wtype              # Wayland virtual keyboard
+xwininfo           # X11 window info
+zenity             # GTK dialogs
+yad                # Popup for scripts
+boxes              # Wrap terminal text into boxes

@@ -1,4 +1,3 @@
-#!/usr/bin/env bash
 
 FOLDER=$HOME/
 
@@ -7,4 +6,4 @@ openvid () { \
   mpv "$FOLDER$NAME" >/dev/null 2>&1
 }
 
-openvid
+

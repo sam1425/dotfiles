@@ -13,11 +13,11 @@ check_deps() {
     done
 }
 
-post(){ 
+post(){
     [[ -f "$FILE" ]] || return 1
     check_deps xclip notify-send
-    
-    if [[ "${WATERMARK:-}" == "1" ]]; then 
+
+    if [[ "${WATERMARK:-}" == "1" ]]; then
         check_deps magick
         magick "$FILE" -gravity "${WATERMARK_POS:-southeast}" -pointsize "${WATERMARK_SIZE:-28}" \
                -fill white -undercolor "${WATERMARK_BG:-#00000080}" \
@@ -25,7 +25,7 @@ post(){
     fi
 
     local action_msg="Screenshot Taken"
-    
+
     if [[ "${MODE_COPY:-1}" == "1" ]]; then
         xclip -selection clipboard -t image/png -i "$FILE"
         action_msg="Copied & Saved"
@@ -34,9 +34,9 @@ post(){
     fi
 
     notify-send -i "$FILE" "$action_msg" "$(basename "$FILE")"
-    
+
     # Always add to clip history
-    command -v imgcliphist &>/dev/null && imgcliphist add "$FILE"
+    # command -v imgcliphist &>/dev/null && imgcliphist add "$FILE"
 
     # If not saving to gallery, remove the temp file (if it was temp)
     # Actually, the script uses a fixed FILE path in OUTDIR.
@@ -45,27 +45,27 @@ post(){
 colorpicker(){
     local bin="/home/c0mplex/.scripts/bpscripts/images-photos-wallpapers/pixpicker"
     [[ -x "$bin" ]] || return 1
-    
+
     # You can set CP_CURSOR to "cross", "tcross", or "ptr"
     local hex=$("$bin" "${CP_CURSOR:-tcross}")
-    
+
     if [[ -n "$hex" ]]; then
         echo -n "$hex" | xclip -selection clipboard -i
         notify-send "Color Picked" "$hex"
     fi
 }
 
-capture_full(){ 
+capture_full(){
     check_deps maim
     maim "$FILE" && post
 }
 
-capture_window(){ 
+capture_window(){
     check_deps maim xdotool
     maim -i "$(xdotool getwindowfocus 2>/dev/null)" "$FILE" && post
 }
 
-capture_selection(){ 
+capture_selection(){
     check_deps maim slop
     GEOM=$(slop -n -f '%g' 2>/dev/null || true)
     [[ -z "$GEOM" ]] && exit 0
@@ -81,19 +81,23 @@ capture_hover_window(){
     maim -i "$WIN" "$FILE" && post
 }
 
-main(){ 
+capture_test(){
+    maim -s 2>/dev/null | magick - -units PixelsPerInch -density 300 -resize 400% png:- | tesseract stdin stdout --psm 6 2>/dev/null | xclip -selection clipboard 
+}
+
+main(){
     case "${1:-}" in
         color*) colorpicker ;;
         full)    capture_full ;;
         window)  capture_window ;;
         hover)   capture_hover_window ;;
-        
+
         # New Modes
         save-full)      MODE_COPY=0 capture_full ;;
-        save-selection) MODE_COPY=0 capture_selection ;;
+        save-selection) MODE_COPY=1 capture_selection ;;
         cwd-full)       OUTDIR="." FILE="./$(date +%d_%m_%y@%M).png" MODE_COPY=0 capture_full ;;
         cwd-selection)  OUTDIR="." FILE="./$(date +%d_%m_%y@%M).png" MODE_COPY=0 capture_selection ;;
-        
+
         *)       capture_selection ;;
     esac
 }
