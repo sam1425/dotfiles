@@ -66,6 +66,7 @@ alias ....='\cd ../../../../'
 alias psg="ps aux | grep -v grep | grep -i -e VSZ -e"
 alias md="mkdir -p"
 alias fm='yazi'
+alias orphans='pacman -Qtdq | sudo pacman -Rns -'
 alias update='mirrors && sudo pacman -Syu'
 alias pacin="pacman -Slq | fzf -m --preview 'cat <(pacman -Si {1}) <(pacman -Fl {1} | awk \"{print \$2}\")' | xargs -ro sudo pacman -S"
 alias paruin="paru -Slq | strings | fzf -m --preview 'paru -Si {1}; echo -e \"\nFILES:\"; paru -Fl {1} | awk \"{print \$2}\" | head -n 100' | xargs -ro paru -S"
