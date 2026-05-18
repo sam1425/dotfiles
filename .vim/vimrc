@@ -15,6 +15,9 @@ Plug 'rhysd/clever-f.vim'
 Plug 'tpope/vim-surround'
 Plug 'yukimura1227/vim-yazi'
 Plug 'wellle/targets.vim'
+Plug 'christoomey/vim-system-copy'
+Plug 'tpope/vim-repeat'
+Plug 'inkarkat/vim-ReplaceWithRegister'
 
 call plug#end()
 "Plug 'wikitopian/hardmode'
@@ -55,7 +58,7 @@ set tabstop=4
 set shiftwidth=4
 set softtabstop=4
 set expandtab
-set clipboard=unnamed,unnamedplus
+" set clipboard=unnamed,unnamedplus
 "set noesckeys
 set nowrap
 set ignorecase
@@ -167,6 +170,8 @@ autocmd BufNewFile,BufRead ?\+.c3 setf c
 "vnoremap p "_dP
 "nnoremap <leader>d d
 "vnoremap <leader>d d
+nnoremap <Tab> >>
+nnoremap <S-Tab> << 
 nnoremap ^ &
 nnoremap & ^
 nnoremap Y y$
@@ -178,6 +183,9 @@ inoremap <expr> <C-j> pumvisible() ? "\<C-n>" : "\<C-j>"
 inoremap <expr> <C-k> pumvisible() ? "\<C-p>" : "\<C-k>"
 inoremap <C-h> <C-w>
 nnoremap <C-t> xp
+cnoremap <C-j> <down>
+cnoremap <C-k> <up>
+nnoremap gt <C-]>
 
 " st workaround
 nmap <Esc>; gcc
