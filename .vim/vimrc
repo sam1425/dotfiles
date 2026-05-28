@@ -18,6 +18,7 @@ Plug 'wellle/targets.vim'
 Plug 'christoomey/vim-system-copy'
 Plug 'tpope/vim-repeat'
 Plug 'inkarkat/vim-ReplaceWithRegister'
+" Plug 'jiangmiao/auto-pairs'
 
 call plug#end()
 "Plug 'wikitopian/hardmode'
@@ -31,6 +32,8 @@ augroup uncrustify_maps
   autocmd FileType cpp nnoremap <buffer> <C-f> :call Uncrustify('cpp')<CR>
   autocmd FileType cpp vnoremap <buffer> <C-f> :call RangeUncrustify('cpp')<CR>
 augroup END
+
+" autocmd FileType c,cpp call AutoPairsInit()
 
 "fix problem with st/vim comment if you are not on st
 autocmd FocusLost * call system('xclip -selection clipboard -in', @+)
@@ -148,7 +151,7 @@ let g:loaded_zipPlugin  = 1
 let g:loaded_tutor      = 1
 let g:loaded_tohtml     = 1
 let g:loaded_rplugin    = 1
-
+packadd! matchit
 let g:undolevels = 1000
 let g:highlightedyank_highlight_duration = 100
 highlight HighlightedyankRegion ctermbg=0 guibg=#8ec07c
@@ -186,6 +189,8 @@ nnoremap <C-t> xp
 cnoremap <C-j> <down>
 cnoremap <C-k> <up>
 nnoremap gt <C-]>
+inoremap {<CR> {<CR>}<C-f><Esc>O
+" inoremap {<CR> {<CR>}<Esc>O
 
 " st workaround
 nmap <Esc>; gcc
