@@ -61,7 +61,7 @@ truncation_length = 50
 truncation_symbol = "*/"
 
 [directory.substitutions]
-"Documents" = "🗃️"
+"Documents" = "🗃️ "
 "Downloads" = "⇩"
 "Programming" = "<code>"
 
