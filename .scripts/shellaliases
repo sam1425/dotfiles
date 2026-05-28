@@ -69,6 +69,6 @@ update_system() {
     fi
 }
 
-dict(){
-    curl -LSs dict.org/d:$@
+define(){
+    ~/.scripts/bpscripts/shortcuts-menus/define $@
 }
