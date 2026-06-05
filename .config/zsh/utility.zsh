@@ -138,6 +138,23 @@ function fkill() {
     fi
 }
 
+ffconvert() {
+    if [ "$#" -ne 2 ]; then
+        echo "Usage: ffconvert input_file output_file"
+        return 1
+    fi
+
+    local input="$1"
+    local output="$2"
+    local ext="${output##*.}"
+
+    if [[ "$input" =~ \.mkv$ ]] && [[ "$output" =~ \.mp4$ ]]; then
+        ffmpeg -i "$input" -c copy -map 0 "$output"
+    else
+        ffmpeg -vaapi_device /dev/dri/renderD128 -i "$input" -vf "format=nv12,hwupload" -c:v h264_vaapi -qp 24 "$output"
+    fi
+} 
+
 function git-svn(){
   if [[ ! -z "$1" && ! -z "$2" ]]; then
           echo "Starting clone/copy ..."

@@ -25,7 +25,7 @@ This repo uses [GNU Stow](https://www.gnu.org/software/stow/) to manage symlinks
 
 ```bash
 # Clone the repo with submodules
-git clone --recurse-submodules https://github.com/sam1425/dot_files.git && cd dotfiles
+git clone --recurse-submodules --depth=1 https://github.com/sam1425/dot_files.git && cd dotfiles
 # Initialize submodules
 git submodule update --init --recursive
 ```

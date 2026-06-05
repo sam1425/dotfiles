@@ -18,7 +18,9 @@ Plug 'wellle/targets.vim'
 Plug 'christoomey/vim-system-copy'
 Plug 'tpope/vim-repeat'
 Plug 'inkarkat/vim-ReplaceWithRegister'
-" Plug 'jiangmiao/auto-pairs'
+Plug 'c3lang/editor-plugins', { 'rtp': 'vim' } " Official C3 syntax
+Plug 'zah/nim.vim'                        " Official Nim syntax
+Plug 'clojure-vim/clojure.vim' " Clojure syntax, matching, and indentation 
 
 call plug#end()
 "Plug 'wikitopian/hardmode'

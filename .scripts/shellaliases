@@ -72,3 +72,8 @@ update_system() {
 define(){
     ~/.scripts/bpscripts/shortcuts-menus/define $@
 }
+
+bible(){
+    kjv $@
+}
+
