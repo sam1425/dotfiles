@@ -77,3 +77,15 @@ bible(){
     kjv $@
 }
 
+ai() {
+    [ -z "$*" ] && return 1
+    response=$(tgpt --provider sky -q "$*" 2>/dev/null)
+    notify-send "AI Chat Answer" "$response" -i dialog-information
+}
+
+rofiai() {
+    /home/c0mplex/Documents/Programming/node/ai_locally/final.sh @*
+}
+
+
+# vim:ft=sh:nowrap

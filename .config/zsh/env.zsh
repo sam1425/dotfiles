@@ -63,7 +63,6 @@ export LESS_TERMCAP_us=$'\033[38;5;108;4m'         # underline → sage green  (
 export LESS_TERMCAP_ue=$'\033[0m'                   # end underline 
 #FZF bases
 export FZF_DEFAULT_OPTS="
-
   --color fg:#ebdbb2
   --color fg+:#689d6a
   --color bg+:#282828
