@@ -27,7 +27,7 @@ export UNISON="$HOME/.config/unison"
 export GPG_TTY="${TTY:-$(tty)}"
 export SUDO_PROMPT="passwd: "
 export TERMINAL="kitty"
-export BROWSER="firefox"
+export BROWSER="librewolf"
 export VISUAL="vim"
 export EDITOR="vim"
 

@@ -3,7 +3,7 @@
 ## =============== ##
 
 function smart-k-up() {
-    if [[ -n "$_zsh_autosuggest_suggestion" || -n "$POSTDISPLAY" ]]; then
+    if [[ -n "$POSTDISPLAY" && $CURSOR -eq $#BUFFER ]]; then
         zle autosuggest-accept
     elif [[ -n "${widgets[history-substring-search-up]}" ]]; then
         zle history-substring-search-up
@@ -11,6 +11,7 @@ function smart-k-up() {
         zle up-line-or-history
     fi
 }
+
 
 function smart-j-down() {
     if [[ -n "${widgets[history-substring-search-down]}" ]]; then

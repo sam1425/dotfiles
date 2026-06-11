@@ -176,3 +176,4 @@ xwininfo           # X11 window info
 zenity             # GTK dialogs
 yad                # Popup for scripts
 boxes              # Wrap terminal text into boxes
+scrot  

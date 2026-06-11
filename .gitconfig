@@ -14,6 +14,7 @@
 	prompt = false
 [alias]
     start = !git checkout master && git pull && git clean -fd
+    cleanall = git clean -fdx
     tree = log --graph --decorate --pretty=oneline --abbrev-commit --all
 	aa = add --all
 	ap = add --patch

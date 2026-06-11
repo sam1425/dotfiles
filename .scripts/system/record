@@ -1,37 +1,57 @@
-#!/usr/bin/env bash
+#!/usr/bin/env sh
+
+# Fix 1: Dynamically resolve DISPLAY if empty, and expand Xauthority path options
+if [ -z "$DISPLAY" ]; then
+  DISPLAY="$(pgrep -a Xorg 2>/dev/null | grep -o ':[0-9]' | head -n 1)"
+  export DISPLAY="${DISPLAY:-:0}"
+fi
+
+if [ -z "$XAUTHORITY" ]; then
+  if [ -f "$HOME/.Xauthority" ]; then
+    export XAUTHORITY="$HOME/.Xauthority"
+  elif [ -n "$XDG_RUNTIME_DIR" ] && [ -f "$XDG_RUNTIME_DIR/Xauthority" ]; then
+    export XAUTHORITY="$XDG_RUNTIME_DIR/Xauthority"
+  else
+    export XAUTHORITY="$(ls -1t /tmp/xauth_* 2>/dev/null | head -n 1)"
+  fi
+fi
+
+kill_pid() {
+  if [ -f "$1" ]; then
+    pid="$(cat "$1" 2>/dev/null)"
+    [ -n "$pid" ] && kill -15 "$pid" 2>/dev/null
+    rm -f "$1"
+  fi
+}
 
 record() {
-  # Toggle on mic
   amixer set Capture toggle
 
-  # Original command for my own screen: :0.0+1920,0 ensures only 2nd monitor is captured
-  # -c:v sets codec, in this case, H.264; -qp 0 ensures lossless
-
-  # ffmpeg -s 1920x1200 -f x11grab -r 30 -i :0.0+1920,0 -c:v h264 -qp 0 "$HOME/video_$(date '+%a__%b%d__%H_%M_%S').mkv" &
-
-  # Generic command to record at your screen dimensions
-  ffmpeg -s "$(xdpyinfo | awk '/dimensions/{print $2}')" -f x11grab -r 30 -i :0.0 -c:v h264 -qp 0 "$HOME/Videos/video_$(date '+%a__%b%d__%H_%M_%S').mkv" &
+  # Uses VA-API (Intel/AMD CPU integrated graphics acceleration) if available, otherwise falls back to software encoding
+  if [ -e /dev/dri/renderD128 ]; then
+    ffmpeg -vaapi_device /dev/dri/renderD128 -s "$(xdpyinfo | awk '/dimensions/{print $2}')" -f x11grab -r 30 -i "$DISPLAY" -vf "format=nv12,hwupload" -c:v h264_vaapi "$HOME/video_$(date '+%a__%b%d__%H_%M_%S').mkv" &
+  else
+    ffmpeg -s "$(xdpyinfo | awk '/dimensions/{print $2}')" -f x11grab -r 30 -i "$DISPLAY" -c:v h264 -qp 0 "$HOME/video_$(date '+%a__%b%d__%H_%M_%S').mkv" &
+  fi
   echo $! > /tmp/recpid
 
-  # Specify alsa device with hw:0 etc.
-  # Filters audio noise with noise floor
-  ffmpeg -f alsa -i default -af "afftdn=nf=-75" "$HOME/Videos/audio_$(date '+%a__%b%d__%H_%M_%S').wav" &
+  ffmpeg -f alsa -i sysdefault -af "afftdn=nf=-75" "$HOME/audio_$(date '+%a__%b%d__%H_%M_%S').wav" &
   echo $! > /tmp/audpid
 
   echo "Rec •" > /tmp/recordingicon && pkill -RTMIN+3 dwmblocks
 
   notify-send -t 500 -h string:bgcolor:#a3be8c "Recording started & mic toggled"
-  }
+}
 
 end() {
-  kill -15 "$(cat /tmp/recpid)" "$(cat /tmp/audpid)" && rm -f /tmp/recpid /tmp/audpid
+  kill_pid /tmp/recpid
+  kill_pid /tmp/audpid
 
   amixer set Capture toggle
 
   echo "" > /tmp/recordingicon && pkill -RTMIN+3 dwmblocks
 
-  notify-send -t 500 -h string:bgcolor:#bf616a "Recording ended & mic toggled"
-  }
+  notify-send -t 500 -h string:bgcolor:#bf616a "Recording ended "
+}
 
-# If the recording pid exists, end recording. If not, start recording
-([[ -f /tmp/recpid ]] && end && exit 0) || record
+([ -f /tmp/recpid ] && end && exit 0) || record
