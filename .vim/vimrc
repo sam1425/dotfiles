@@ -15,7 +15,7 @@ Plug 'rhysd/clever-f.vim'
 Plug 'tpope/vim-surround'
 Plug 'yukimura1227/vim-yazi'
 Plug 'wellle/targets.vim'
-Plug 'christoomey/vim-system-copy'
+" Plug 'christoomey/vim-system-copy'
 Plug 'tpope/vim-repeat'
 Plug 'inkarkat/vim-ReplaceWithRegister'
 Plug 'c3lang/editor-plugins', { 'rtp': 'vim' } " Official C3 syntax
@@ -63,7 +63,7 @@ set tabstop=4
 set shiftwidth=4
 set softtabstop=4
 set expandtab
-" set clipboard=unnamed,unnamedplus
+set clipboard=unnamed,unnamedplus
 "set noesckeys
 set nowrap
 set ignorecase
