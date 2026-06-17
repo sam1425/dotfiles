@@ -1,4 +1,9 @@
-## Aliases
+#  .d8b.  db      d888888b  .d8b.  .d8888. d88888b .d8888.
+# d8' `8b 88        `88'   d8' `8b 88'  YP 88'     88'  YP
+# 88ooo88 88         88    88ooo88 `8bo.   88ooooo `8bo.
+# 88~~~88 88         88    88~~~88   `Y8b. 88~~~~~   `Y8b.
+# 88   88 88booo.   .88.   88   88 db   8D 88.     db   8D
+# YP   YP Y88888P Y888888P YP   YP `8888Y' Y88888P `8888Y'
 
 #especific for c development
 alias makec='cc -o exe'
@@ -31,6 +36,7 @@ keyboard() {
     sudo systemd-hwdb update
     sudo udevadm trigger /dev/input/event*
 }
+
 brightnessup(){
     magick $1 -brightness -contrast 20x0 $1
 }
@@ -41,6 +47,11 @@ make(){
   else
     command make "$@"
   fi
+}
+
+cz() {
+  local dir
+  dir=$(zoxide query -l | fzf --reverse --height 40% --preview 'eza --tree --level 2 --icons {}' --preview-window right:50%) && cd "$dir"
 }
 
 #Useful:
@@ -71,6 +82,7 @@ alias update='mirrors && sudo pacman -Syu'
 alias pacin="pacman -Slq | fzf -m --preview 'cat <(pacman -Si {1}) <(pacman -Fl {1} | awk \"{print \$2}\")' | xargs -ro sudo pacman -S"
 alias paruin="paru -Slq | strings | fzf -m --preview 'paru -Si {1}; echo -e \"\nFILES:\"; paru -Fl {1} | awk \"{print \$2}\" | head -n 100' | xargs -ro paru -S"
 alias pacrem="pacman -Qq | fzf --multi --preview 'pacman -Qi {1}' | xargs -ro sudo pacman -Rns"
+alias paccache='sudo paccache -rk3'
 alias mirrors="sudo reflector --latest 20 --protocol https --sort rate --save /etc/pacman.d/mirrorlist"
 alias pac="pacman -Q | fzf"
 alias parucom="paru -Gc"

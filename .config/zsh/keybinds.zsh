@@ -1,6 +1,13 @@
-## =============== ##
-##   Keybindings   ##
-## =============== ##
+#  d8b                         d8b        d8,                d8b
+#  ?88                         ?88       `8P                 88P
+#   88b                         88b                         d88
+#   888  d88' d8888b?88   d8P   888888b   88b  88bd88b  d888888   .d888b,
+#   888bd8P' d8b_,dPd88   88    88P `?8b  88P  88P' ?8bd8P' ?88   ?8b,
+#  d88888b   88b    ?8(  d88   d88,  d88 d88  d88   88P88b  ,88b    `?8b
+# d88' `?88b,`?888P'`?88P'?8b d88'`?88P'd88' d88'   88b`?88P'`88b`?888P'
+#                          )88
+#                         ,d8P
+#                      `?888P'
 
 function smart-k-up() {
     if [[ -n "$POSTDISPLAY" && $CURSOR -eq $#BUFFER ]]; then
@@ -49,6 +56,8 @@ function zvm_after_init() {
 
     zvm_bindkey viins '^B' _sudo_command_line
     zvm_bindkey vicmd '^B' _sudo_command_line
+
+    zvm_bindkey vicmd '^F' 
 
     zvm_bindkey viins '^W' vi-backward-kill-word
 

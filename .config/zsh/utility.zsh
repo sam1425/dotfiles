@@ -1,6 +1,8 @@
-##
-## Utility Functions
-##
+# █   █   █     ▀    ▀█     ▀     █
+# █   █  ▀█▀   ▀█     █    ▀█    ▀█▀  █   █
+# █   █   █     █     █     █     █   █   █
+# ▀▄▄▄▀   ▀▄▄  ▄█▄    ▀▄▄  ▄█▄    ▀▄▄ ▀▄▄▄█
+#                                      ▄▄▄▀
 
 function y() {
 	local tmp="$(mktemp -t "yazi-cwd.XXXXXX")" cwd
@@ -153,7 +155,7 @@ ffconvert() {
     else
         ffmpeg -vaapi_device /dev/dri/renderD128 -i "$input" -vf "format=nv12,hwupload" -c:v h264_vaapi -qp 24 "$output"
     fi
-} 
+}
 
 function git-svn(){
   if [[ ! -z "$1" && ! -z "$2" ]]; then
@@ -215,6 +217,7 @@ run() {
         lua)  lua "$file" ;;
         sh)   bash "$file" ;;
         nim)  nim c -r "$file" ;;
+        qml)  qs -p "$file" ;;
         *)    echo "Error: Unsupported extension '.$ext'" ;;
     esac
 }
@@ -225,22 +228,18 @@ run() {
 #
 # credit: http://nparikh.org/notes/zshrc.txt
 extract () {
-    if [ -f $1 ]; then
-        case $1 in
-            *.tar.bz2)  tar -jxvf $1                        ;;
-            *.tar.gz)   tar -xvf $1                         ;;
-            *.bz2)      bunzip2 $1                          ;;
-            *.dmg)      hdiutil mount $1                    ;;
-            *.gz)       gunzip $1                           ;;
-            *.tar)      tar -xvf $1                         ;;
-            *.tbz2)     tar -jxvf $1                        ;;
-            *.tgz)      tar -zxvf $1                        ;;
-            *.zip)      unzip $1                            ;;
-            *.ZIP)      unzip $1                            ;;
-            *.pax)      cat $1 | pax -r                     ;;
-            *.pax.Z)    uncompress $1 --stdout | pax -r     ;;
-            *.rar)      unrar x $1                          ;;
-            *.Z)        uncompress $1                       ;;
+    if [ -f "$1" ]; then
+        case "$1" in
+            *.tar.bz2|*.tar.gz|*.tar.xz|*.tbz2|*.tgz|*.tar) tar -xvf "$1"       ;;
+            *.7z)       7z x "$1"                           ;;
+            *.bz2)      bunzip2 "$1"                        ;;
+            *.dmg)      hdiutil mount "$1"                  ;;
+            *.gz)       gunzip "$1"                         ;;
+            *.zip|*.ZIP) unzip "$1"                         ;;
+            *.pax)      pax -r < "$1"                       ;;
+            *.pax.Z)    uncompress "$1" --stdout | pax -r   ;;
+            *.rar)      unrar x "$1"                        ;;
+            *.Z)        uncompress "$1"                     ;;
             *)          echo "'$1' cannot be extracted/mounted via extract()" ;;
         esac
     else
