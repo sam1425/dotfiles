@@ -1,11 +1,19 @@
+
 [user]
 	email = sadasipa@gmail.com
 	name = c0mplex
+[core]
+    pager = delta
+[delta]
+    navigate = true
+    dark = true
+[interactive]
+    diffFilter = delta --color-only
 [init]
 	defaultBranch = main
 [merge]
     tool = vimdiff
-    conflictStyle = diff3
+    conflictStyle = zdiff3
 [mergetool]
     prompt = false
 [magit]
