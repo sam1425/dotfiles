@@ -176,4 +176,5 @@ xwininfo           # X11 window info
 zenity             # GTK dialogs
 yad                # Popup for scripts
 boxes              # Wrap terminal text into boxes
-scrot  
+scrot         # alternative binary to take screenshots
+git-delta          # beautiful git diffs
