@@ -180,6 +180,7 @@ cls() {
     fi
 }
 
+
 run() {
     local file=$1
     if [[ -z "$file" ]]; then
@@ -199,28 +200,34 @@ run() {
     local ext="${file##*.}"
     local filename="${file%.*}"
 
+    shift # Removes $1 (the file). Now "${@}" contains ONLY your extra flags/arguments.
+
     case "$ext" in
-        clj)  clojure -M "$file" ;;
-        lisp) sbcl --script "$file" ;;
-        zig)  zig run "$file" ;;
-        odin) odin run "$file" -file ;;
-        js)   node "$file" ;;
-        cs)   mcs "$file" && mono "${filename}.exe" ;;
-        tcl)  tclsh "$file" ;;
-        c)    gcc "$file" -o "$filename" && ./"$filename" ;;
-        cpp)  g++ "$file" -o "$filename" && ./"$filename" ;;
-        go)   go run "$file" ;;
-        rs)   rustc "$file" && ./"$filename" ;;
-        py)   pypy "$file" ;;
-        rb)   ruby "$file" ;;
-        java) javac "$file" && java "$filename" ;;
-        lua)  lua "$file" ;;
-        sh)   bash "$file" ;;
-        nim)  nim c -r "$file" ;;
-        qml)  qs -p "$file" ;;
+        clj)  clojure -M "$file" "${@}" ;;
+        lisp) sbcl --script "$file" "${@}" ;;
+        zig)  zig run "$file" -- "${@}" ;; # Zig requires -- to separate runner flags from binary args
+        odin) odin run "$file" -file -- "${@}" ;;
+        js)   node "$file" "${@}" ;;
+        cs)   mcs "$file" && mono "${filename}.exe" "${@}" ;;
+        tcl)  tclsh "$file" "${@}" ;;
+        c)    if command -v c >/dev/null 2>&1; then command c "$file" "${@}"; else gcc "$file" -o "$filename" && ./"$filename" "${@}"; fi ;;
+        cpp)  g++ "$file" -o "$filename" && ./"$filename" "${@}" ;;
+        go)   go run "$file" "${@}" ;;
+        rs)   rustc "$file" && ./"$filename" "${@}" ;;
+        py)   pypy "$file" "${@}" ;;
+        rb)   ruby "$file" "${@}" ;;
+        java) javac "$file" && java "$filename" "${@}" ;;
+        lua)  lua "$file" "${@}" ;;
+        sh)   bash "$file" "${@}" ;;
+        nim)  nim c -r "$file" "${@}" ;;
+        elx|ex|exs) elixir "$file" "${@}" ;;
+        qml)  qs -p "$file" "${@}" ;;
+        ml)   ocaml "$file" "${@}" ;;
         *)    echo "Error: Unsupported extension '.$ext'" ;;
     esac
 }
+
+
 
 # Usage: extract <file>
 # Description: extracts archived files / mounts disk images
