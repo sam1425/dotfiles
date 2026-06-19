@@ -41,6 +41,14 @@ function zvm_escape_newline_indent() {
 }
 zle -N zvm_escape_newline_indent
 
+function _fzf_find_file() {
+    local file
+    file=$(fd --type f --hidden --follow --exclude .git 2>/dev/null \
+        | fzf --preview 'bat --color=always --line-range :500 {}' --preview-window=right:60%) \
+        && $EDITOR "$file"
+}
+zle -N _fzf_find_file
+
 # --- Binds ---
 function zvm_after_init() {
 
@@ -57,13 +65,15 @@ function zvm_after_init() {
     zvm_bindkey viins '^B' _sudo_command_line
     zvm_bindkey vicmd '^B' _sudo_command_line
 
-    zvm_bindkey vicmd '^F' 
 
     zvm_bindkey viins '^W' vi-backward-kill-word
 
     zvm_bindkey viins '^H' vi-backward-kill-word
 
     #zvm_bindkey viins '^?' vi-backward-kill-word
+
+    zvm_bindkey viins '^F' _fzf_find_file
+    zvm_bindkey vicmd '^F' _fzf_find_file
 
     zvm_bindkey viins '^[[13;2u' zvm_escape_newline_indent
 

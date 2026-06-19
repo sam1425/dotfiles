@@ -68,7 +68,7 @@
 	autosquash = true
 	autoStash = true
 [rerere]
-	eanbled = true
+	enabled = true
 [column]
 	ui = auto
 [branch]
@@ -82,5 +82,9 @@
 [credential "https://gist.github.com"]
 	helper = 
 	helper = !/usr/bin/gh auth git-credential
+[url "git@github.com:"]
+    insteadOf = "gh:"
+[url "https://github.com/"]
+    pushInsteadOf = "gh:"
 [color]
 	ui = auto

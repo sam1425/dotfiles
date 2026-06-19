@@ -229,6 +229,10 @@ run() {
 
 
 
+serve() {
+    python3 -m http.server "${1:-8000}"
+}
+
 # Usage: extract <file>
 # Description: extracts archived files / mounts disk images
 # Note: .dmg/hdiutil is macOS-specific.
