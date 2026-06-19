@@ -21,6 +21,8 @@ Plug 'inkarkat/vim-ReplaceWithRegister'
 Plug 'c3lang/editor-plugins', { 'rtp': 'vim' } " Official C3 syntax
 Plug 'zah/nim.vim'                        " Official Nim syntax
 Plug 'clojure-vim/clojure.vim' " Clojure syntax, matching, and indentation 
+Plug 'junegunn/fzf.vim'
+Plug 'tpope/vim-sleuth'
 
 call plug#end()
 "Plug 'wikitopian/hardmode'
