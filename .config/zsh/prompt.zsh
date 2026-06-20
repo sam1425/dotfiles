@@ -2,7 +2,7 @@
 ## Prompt
 ##
 
-# /home/c0mplex/.scripts/loginart/optimizedlogincatwithhtext
+# $HOME/.scripts/loginart/optimizedlogincatwithhtext
 
 if [[ ! -f "$ZSH_RAM_CACHE/starship_init.zsh" ]]; then
   starship init zsh > "$ZSH_RAM_CACHE/starship_init.zsh"
