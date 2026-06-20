@@ -14,23 +14,41 @@
 # system's package manager if it is not installed.
 set -e
 
+gum_confirm() {
+    if command -v gum &>/dev/null; then
+        gum confirm "$1" --default="$2"
+    else
+        local prompt="$1"
+        local default="$2"
+        if [[ "$default" == "true" ]]; then
+            prompt="$prompt [Y/n] "
+        else
+            prompt="$prompt [y/N] "
+        fi
+        read -r -p "$prompt"
+        [[ "$REPLY" =~ ^[Yy]$ ]] || [[ -z "$REPLY" && "$default" == "true" ]]
+    fi
+}
+
 if ! command -v stow &>/dev/null; then
     echo "stow is not installed."
-    read -p "Press [Enter] to install stow, or Ctrl+C to cancel..."
-    
-    [[ -f /etc/os-release ]] && . /etc/os-release
-    case "$ID" in
-        arch|artix)
-            sudo pacman -S --noconfirm stow ;; debian|ubuntu|pop|mint)
-            sudo apt-get update -qq && sudo apt-get install -y stow ;;
-        fedora|nobara)
-            sudo dnf install -y stow ;;
-        void)
-            sudo xbps-install -Sy stow ;;
-        *)
-            echo "Package manager not supported. Please install 'stow' manually."
-            exit 1 ;;
-    esac
+    if gum_confirm "Install stow?" "true"; then
+        [[ -f /etc/os-release ]] && . /etc/os-release
+        case "$ID" in
+            arch|artix)
+                sudo pacman -S --noconfirm stow ;; debian|ubuntu|pop|mint)
+                sudo apt-get update -qq && sudo apt-get install -y stow ;;
+            fedora|nobara)
+                sudo dnf install -y stow ;;
+            void)
+                sudo xbps-install -Sy stow ;;
+            *)
+                echo "Package manager not supported. Please install 'stow' manually."
+                exit 1 ;;
+        esac
+    else
+        exit 1
+    fi
 fi
 
 MODE=$1
@@ -46,10 +64,16 @@ elif [[ "$MODE" == "all" ]]; then
     if [[ -d $SYSTEMDIR  ]]; then
         stow --adopt -t ~ .
         sudo stow --adopt -d $SYSTEMDIR -t / $DIR
-        stow --adopt --ignore='system' --ignore='suckless'-d "$FULLDIR" $DIR
+        stow --adopt --ignore='system' --ignore='suckless' -d "$FULLDIR" $DIR
         echo "ALL Dotfiles Symlinked"
-        echo "do you want to install my personalized suckless tools? [y/n] "
-        exit 0
+        if gum_confirm "Install my personalized suckless tools?" "false"; then
+            if [[ -d "$FULLDIR/suckless" ]]; then
+                sudo stow --adopt -d "$FULLDIR/suckless" -t /usr/local .
+                echo "Suckless tools installed."
+            else
+                echo "No suckless directory found in .files."
+            fi
+        fi
     fi
     exit 0
 else

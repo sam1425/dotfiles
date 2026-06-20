@@ -13,8 +13,8 @@ set -e
 MODE=$1
 
 if [[ "$MODE" == "sys" ]]; then
-    SYSTEMDIR="system"
-    sudo stow -D -t / "$SYSTEMDIR"
+    SYSTEMDIR=".files/system"
+    sudo stow -D -d $SYSTEMDIR -t / .
     echo "System dotfiles unlinked"
 elif [[ "$MODE" == "all" ]]; then
     DIR="."
