@@ -171,6 +171,46 @@ command_not_found_handler(){
     printf "\033[1;38;2;254;128;25m%s\033[0m not found\n" "$1"
     return 127
 }
+
+installcmd() {
+    if ! command -v pkgfile >/dev/null 2>&1; then
+        printf "\033[1;38;2;234;105;98mInstall pkgfile first:\033[0m sudo pacman -S pkgfile && sudo pkgfile --update\n"
+        return 1
+    fi
+    local pkgs
+    pkgs=$(pkgfile -b "$1" 2>/dev/null)
+    if [[ -n "$pkgs" ]]; then
+        printf "\033[1;38;2;168;182;101mInstall:\033[0m sudo pacman -S %s\n" "$pkgs"
+    else
+        printf "\033[1;38;2;216;166;87mNo package found for:\033[0m %s\n" "$1"
+    fi
+}
+
+take() {
+    mkdir -p "$1" && cd "$1"
+}
+
+# trim newlines and whitespace
+sanitize() {
+    local input="${@}"
+    if [[ -z "$input" ]]; then
+        local input="$(cat)"
+    fi
+    
+    # Remove newlines and trim whitespace
+    local sanitized="${input}"
+    sanitized=${sanitized//$'\r'/}
+    sanitized=${sanitized//$'\n'/}
+    sanitized=${sanitized##*( )}
+    sanitized=${sanitized%%*( )}
+    
+    # Remove any remaining whitespace characters
+    sanitized=${sanitized//$'\t'/}
+    sanitized=${sanitized//$'\v'/}
+    sanitized=${sanitized//$'\f'/}
+    
+    printf "%s" "$sanitized" | copy
+}
 # Smart clear function
 cls() {
     if [[ "$TERM" == "st"* ]]; then
@@ -208,6 +248,7 @@ run() {
         zig)  zig run "$file" -- "${@}" ;; # Zig requires -- to separate runner flags from binary args
         odin) odin run "$file" -file -- "${@}" ;;
         js)   node "$file" "${@}" ;;
+        ts|tsx) tsx "$file" "${@}" ;;
         cs)   mcs "$file" && mono "${filename}.exe" "${@}" ;;
         tcl)  tclsh "$file" "${@}" ;;
         c)    if command -v c >/dev/null 2>&1; then command c "$file" "${@}"; else gcc "$file" -o "$filename" && ./"$filename" "${@}"; fi ;;
