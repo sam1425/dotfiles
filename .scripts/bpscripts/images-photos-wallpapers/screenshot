@@ -43,7 +43,7 @@ post(){
 }
 
 colorpicker(){
-    local bin="/home/c0mplex/.scripts/bpscripts/images-photos-wallpapers/pixpicker"
+    local bin="$HOME/.scripts/bpscripts/images-photos-wallpapers/pixpicker"
     [[ -x "$bin" ]] || return 1
 
     # You can set CP_CURSOR to "cross", "tcross", or "ptr"

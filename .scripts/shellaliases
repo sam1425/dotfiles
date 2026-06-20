@@ -84,11 +84,11 @@ ai() {
 }
 
 rofiai() {
-    /home/c0mplex/Documents/Programming/node/ai_locally/final.sh @*
+    $HOME/Documents/Programming/node/ai_locally/final.sh @*
 }
 
 record() {
-    /home/c0mplex/.scripts/system/record $@
+    $HOME/.scripts/system/record $@
 }
 
 # vim:ft=sh:nowrap

@@ -1,6 +1,6 @@
 #/usr/bin/bash
 
-msg=$(/home/c0mplex/.scripts/daily_verse | fold -s -w 60)
+msg=$($HOME/.scripts/daily_verse | fold -s -w 60)
 
 box_only=$(echo "$msg" | boxes -d ansi -p a2 -a c)
 

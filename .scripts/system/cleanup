@@ -30,9 +30,9 @@ get_total_usage() {
 
 TEMP_PATHS=(
     "/tmp"
-    "/home/c0mplex/.cache"
-    "/home/c0mplex/.vim/filebackups"
-    "/home/c0mplex/.emacs.d/filebackups"
+    "$HOME/.cache"
+    "$HOME/.vim/filebackups"
+    "$HOME/.emacs.d/filebackups"
     "/var/tmp"
     "/var/cache/pacman/pkg"
     "/var/log"

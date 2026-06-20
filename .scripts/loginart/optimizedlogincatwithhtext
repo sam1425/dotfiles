@@ -1,7 +1,7 @@
 #!/bin/bash
-msg=$(/home/c0mplex/.scripts/system/daily_verse | fold -s -w 60)
+msg=$($HOME/.scripts/system/daily_verse | fold -s -w 60)
 box_only=$(echo "$msg" | boxes -d ansi -p a2 -a c)
-msg=$(/home/c0mplex/.scripts/system/daily_verse | fold -s -w 60)
+msg=$($HOME/.scripts/system/daily_verse | fold -s -w 60)
 box_only=$(echo "$msg" | boxes -d ansi -p a2 -a c)
 cat_raw=$(cat << 'EOF'
 ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣤⣦⡄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣠⣤⡀⠀⠀⠀⠀⠀⠀⠀
