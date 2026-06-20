@@ -285,7 +285,6 @@ extract () {
             *.tar.bz2|*.tar.gz|*.tar.xz|*.tbz2|*.tgz|*.tar) tar -xvf "$1"       ;;
             *.7z)       7z x "$1"                           ;;
             *.bz2)      bunzip2 "$1"                        ;;
-            *.dmg)      hdiutil mount "$1"                  ;;
             *.gz)       gunzip "$1"                         ;;
             *.zip|*.ZIP) unzip "$1"                         ;;
             *.pax)      pax -r < "$1"                       ;;
@@ -299,4 +298,4 @@ extract () {
     fi
 }
 
-# vim:ft=sh
+# vim:ft=zsh
