@@ -132,7 +132,7 @@ unison(){
 alias fonts="fc-list : family | cut -d, -f1 | sort -u | fzf"
 
 #git specific:
-source "$HOME/.config/zsh/gitaliases.zsh"
+source "$HOME/.config/zsh/unsourced/gitaliases.zsh"
 alias gitalias='source "$HOME/.config/zsh/unsourced/gitaliases.zsh"'
 
 # vim:ft=zsh
