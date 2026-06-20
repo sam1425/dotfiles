@@ -1,4 +1,16 @@
 # Remove `+` and `-` from start of diff lines; just rely upon color.
+
+git_main_branch() {
+  git symbolic-ref refs/remotes/origin/HEAD 2>/dev/null | sed 's@^refs/remotes/origin/@@' || echo "main"
+}
+git_develop_branch() { echo "develop"; }
+git_current_branch() {
+  git symbolic-ref --short HEAD 2>/dev/null || git rev-parse --short HEAD 2>/dev/null
+}
+_git_log_prettily() {
+  git log --pretty="$1" "${@:2}"
+}
+
 alias gc='git commit'
 alias gca='git commit -a'
 alias gco='git checkout'
@@ -81,7 +93,7 @@ alias gfo='git fetch origin'
 alias gg='git gui citool'
 alias gga='git gui citool --amend'
 alias ggpull='git pull origin "$(git_current_branch)"'
-alias ggpur=ggu
+alias ggpur='git pull --rebase origin "$(git_current_branch)"'
 alias ggpush='git push origin "$(git_current_branch)"'
 alias ggsup='git branch --set-upstream-to=origin/$(git_current_branch)'
 alias ghh='git help'

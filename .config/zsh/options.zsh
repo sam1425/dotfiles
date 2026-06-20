@@ -36,7 +36,7 @@ fi
 zle -N _sudo_command_line
 
 # History
-HISTFILE="$XDG_CACHE_HOME/zsh/.zhistory"
+HISTFILE="$XDG_CACHE_HOME/.zhistory"
 HISTSIZE=10000
 SAVEHIST=10000
 

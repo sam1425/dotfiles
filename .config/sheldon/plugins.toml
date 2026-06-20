@@ -28,6 +28,6 @@ github = "z-shell/F-Sy-H"
 [templates]
 defer = "{% for file in files %}zsh-defer source \"{{ file }}\"\n{% endfor %}"
 
-[plugins.autojump]
-github = "wting/autojump"
-apply = ["defer"]
+#[plugins.autojump]
+#github = "wting/autojump"
+#apply = ["defer"]
