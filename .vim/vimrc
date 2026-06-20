@@ -75,7 +75,6 @@ set cinoptions=l1
 "set modeline
 set autoindent
 set autochdir
-set termguicolors
 set background=dark
 if (has("termguicolors"))
   set termguicolors
