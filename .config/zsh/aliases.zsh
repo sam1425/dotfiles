@@ -65,7 +65,6 @@ alias cleanram="sudo sh -c 'sync; echo 3 > /proc/sys/vm/drop_caches'"
 alias mktar='tar zcvf' # mktar <archive_compress>
 alias untar='tar zxvf' # untar <archive_decompress> <file_list>
 alias zp='zip -r' # z <archive_compress> <file_list>
-alias sr='source ~/.config/zsh/env.zsh'
 alias ..="\cd .."
 alias ...='\cd ../../'
 alias ....='\cd ../../..'
