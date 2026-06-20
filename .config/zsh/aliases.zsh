@@ -5,8 +5,6 @@
 # 88   88 88booo.   .88.   88   88 db   8D 88.     db   8D
 # YP   YP Y88888P Y888888P YP   YP `8888Y' Y88888P `8888Y'
 
-#especific for c development
-alias makec='cc -o exe'
 #especific for monogame engine
 alias mgcb_editor='dotnet mgcb-editor Content/Content.mgcb'
 #platform specific:
@@ -15,7 +13,7 @@ alias icat='kitten icat'
 alias lynx='lynx -vikeys'
 alias Prompt='PROMPT="%~ % "'
 alias emacst='emacsclient -a ''"'
-#alias vim="echo 'just use emacs bro' && sleep 1 && vim"
+
 vim() {
   local buf
   buf=$(emacsclient -e "(buffer-name (window-buffer (frame-selected-window (selected-frame))))" 2>/dev/null)
@@ -30,8 +28,10 @@ emacs() {
     # Once Emacs is closed, jump back to Tag 1
     xdotool key alt+1
 }
+alias emacsc="emacsclient -n"
 alias vimacs="\emacs -nw"
 alias starprompt="source ~/.scripts/prompt"
+
 keyboard() {
     sudo systemd-hwdb update
     sudo udevadm trigger /dev/input/event*
@@ -66,10 +66,6 @@ alias mktar='tar zcvf' # mktar <archive_compress>
 alias untar='tar zxvf' # untar <archive_decompress> <file_list>
 alias zp='zip -r' # z <archive_compress> <file_list>
 alias sr='source ~/.config/zsh/env.zsh'
-cz() {
-  local dir
-  dir=$(zoxide query -l | fzf --reverse --height 40%) && cd "$dir"
-}
 alias ..="\cd .."
 alias ...='\cd ../../'
 alias ....='\cd ../../../'
@@ -109,10 +105,10 @@ alias cp='cp -ivr'
 alias copy="xclip -selection clipboard -i"
 alias rmvr='rm -vr'
 alias xprop='xprop -id $(slop -f "%i" -b 2 -p -2 -c 0.2,0.51,0.45,1 2>/dev/null)'
+
 #Not so useful:
 #alias mkgrub='sudo grub-mkconfig -o /boot/grub/grub.cfg'
-#alias run='just run'
-#alias trim_all="sudo fstrim -va"
+alias trimssd="sudo fstrim -va"
 alias cpugetavail='cat /sys/devices/system/cpu/cpu*/cpufreq/scaling_available_governors'
 alias cpushowcurrent='cat /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor'
 alias cpusethigh='echo performance | sudo tee /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor'
@@ -124,6 +120,7 @@ whoown(){
 #Networking
 alias ports='netstat -tulanp'
 alias myip="curl -s ifconfig.me"
+
 globalip(){
     diff <(myip) <(dig +short iduai.duckdns.org)
 }
