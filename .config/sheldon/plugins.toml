@@ -14,23 +14,20 @@ apply = ["defer"]
 
 [plugins.fzf-tab]
 github = "Aloxaf/fzf-tab"
-apply = ["defer"]
 
 [plugins.zsh-history-substring-search]
 github = "zsh-users/zsh-history-substring-search"
 apply = ["defer"]
 
+[plugins.zsh-vi-mode]
+github = "jeffreytse/zsh-vi-mode"
+
 [plugins.fast-syntax-highlighting]
-github = "zdharma-continuum/fast-syntax-highlighting"
-apply = ["defer"]
+github = "z-shell/F-Sy-H"
 
 [templates]
 defer = "{% for file in files %}zsh-defer source \"{{ file }}\"\n{% endfor %}"
 
 [plugins.autojump]
 github = "wting/autojump"
-apply = ["defer"]
-
-[plugins.zsh-vi-mode]
-github = "jeffreytse/zsh-vi-mode"
 apply = ["defer"]
