@@ -209,7 +209,7 @@ sanitize() {
     sanitized=${sanitized//$'\v'/}
     sanitized=${sanitized//$'\f'/}
     
-    printf "%s" "$sanitized" | copy
+    printf "%s" "$sanitized" | xclip -selection clipboard -i
 }
 # Smart clear function
 cls() {
@@ -254,7 +254,7 @@ run() {
         c)    if command -v c >/dev/null 2>&1; then command c "$file" "${@}"; else gcc "$file" -o "$filename" && ./"$filename" "${@}"; fi ;;
         cpp)  g++ "$file" -o "$filename" && ./"$filename" "${@}" ;;
         go)   go run "$file" "${@}" ;;
-        rs)   rustc "$file" && ./"$filename" "${@}" ;;
+        rs)   cargo script "$file" "${@}" ;;
         py)   pypy "$file" "${@}" ;;
         rb)   ruby "$file" "${@}" ;;
         java) javac "$file" && java "$filename" "${@}" ;;

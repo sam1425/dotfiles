@@ -8,7 +8,11 @@
 #  ██████████  ▀█   █▀   ▀██████▀
 
 # PATH & ENV Var
-export ZSH_RAM_CACHE="/dev/shm/zsh-$USER"
+if [[ -d /dev/shm ]]; then
+  export ZSH_RAM_CACHE="/dev/shm/zsh-$USER"
+else
+  export ZSH_RAM_CACHE="${XDG_CACHE_HOME:-$HOME/.cache}/zsh-ram"
+fi
 mkdir -p "$ZSH_RAM_CACHE" 
 
 export GPG_TTY="${TTY:-$(tty)}"
