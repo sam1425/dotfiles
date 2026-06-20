@@ -96,8 +96,7 @@ export KEYTIMEOUT=30
 # Starship taking the power from vi mode
 export STARSHIP_ZLE_RPROMPT_NUM_LINES=1
 export STARSHIP_CONFIG="$HOME/.config/starship/starship.toml"
-#fix
-export DISABLE_AUTO_TITLE="true"
+
 
 #zoxide fix
 export _ZO_EXCLUDE_DIRS="$HOME:$XDG_CONFIG_HOME:$XDG_DATA_HOME/*:$XDG_DOCUMENTS_DIR:$PROG_DIR"
