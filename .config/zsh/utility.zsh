@@ -136,7 +136,7 @@ function fkill() {
     local pid
     pid=$(ps -ef | sed 1d | fzf -m | awk '{print $2}')
     if [ "x$pid" != "x" ]; then
-        echo $pid | xargs kill -${1:-9}
+        echo $pid | xargs kill -${1:-15}
     fi
 }
 
@@ -168,7 +168,7 @@ function git-svn(){
 }
 #default modifications
 command_not_found_handler(){
-    printf "\033[1;38;2;254;128;25m%s\033[0m not found\n" "$1"
+    printf "\033[1;38;2;254;128;25m%s\033[0m not found\n" "$1" >&2
     return 127
 }
 

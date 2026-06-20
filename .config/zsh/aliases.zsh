@@ -12,7 +12,6 @@ bgr() { feh --bg-scale "$(command find ~/Pictures/wallpaper -type f | shuf -n1)"
 alias icat='kitten icat'
 alias lynx='command lynx -vikeys'
 alias Prompt='PROMPT="%~ % "'
-alias emacst='emacsclient -a ''"'
 
 vim() {
   local buf
@@ -133,7 +132,7 @@ unison(){
 alias fonts="fc-list : family | cut -d, -f1 | sort -u | fzf"
 
 #git specific:
-source "$HOME/.config/zsh/specific/gitaliases.zsh"
-alias gitalias='source "$HOME/.config/zsh/specific/gitaliases.zsh"'
+source "$HOME/.config/zsh/gitaliases.zsh"
+alias gitalias='source "$HOME/.config/zsh/unsourced/gitaliases.zsh"'
 
 # vim:ft=zsh
