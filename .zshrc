@@ -10,7 +10,7 @@
 
 while read file
 do 
-  source "/home/$USER/.config/zsh/$file.zsh"
+  source "$HOME/.config/zsh/$file.zsh"
 done <<-EOF
 theme
 env
