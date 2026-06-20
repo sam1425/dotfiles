@@ -66,13 +66,19 @@ elif [[ "$MODE" == "all" ]]; then
         sudo stow --adopt -d $SYSTEMDIR -t / $DIR
         stow --adopt --ignore='system' --ignore='suckless' -d "$FULLDIR" $DIR
         echo "ALL Dotfiles Symlinked"
-        if gum_confirm "Install my personalized suckless tools?" "false"; then
-            if [[ -d "$FULLDIR/suckless" ]]; then
-                sudo stow --adopt -d "$FULLDIR/suckless" -t /usr/local .
-                echo "Suckless tools installed."
-            else
-                echo "No suckless directory found in .files."
-            fi
+        if gum_confirm "Build and install suckless tools (dwm, st-flexipatch, dwmblocks-async)?" "false"; then
+            SUCK_DIR="$FULLDIR/suckless"
+            for dir in dwm st-flexipatch dwmblocks-async; do
+                if [[ -d "$SUCK_DIR/$dir" ]]; then
+                    echo "Building $dir..."
+                    make -C "$SUCK_DIR/$dir" clean 2>/dev/null
+                    make -C "$SUCK_DIR/$dir" -j"$(nproc)"
+                    sudo make -C "$SUCK_DIR/$dir" install
+                    echo "$dir installed."
+                else
+                    echo "Skipping $dir — directory not found."
+                fi
+            done
         fi
     fi
     exit 0
