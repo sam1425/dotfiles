@@ -20,4 +20,19 @@ source "$ZSH_RAM_CACHE/starship_init.zsh"
 # cursor (|) at startup
 printf '\e[5 q'
 
+# Syntax highlighting colors (set after F-Sy-H loads to avoid being wiped)
+FAST_HIGHLIGHT_STYLES+=(
+  'command'        'fg=#89B482'
+  'alias'          'fg=#89B482'
+  'builtin'        'fg=#89B482'
+  'function'       'fg=#89B482'
+  'keyword'        'fg=#D3869B'
+  'string'         'fg=#D8A657'
+  'single-quoted-argument' 'fg=#D8A657'
+  'double-quoted-argument' 'fg=#D8A657'
+  'path'           'fg=#7DAEA3'
+  'comment'        'fg=#928374,italic'
+  'precommand'     'fg=#D3869B'
+)
+
 # vim:ft=zsh

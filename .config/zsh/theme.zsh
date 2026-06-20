@@ -36,16 +36,4 @@ color14='#89B482'
 # white
 color7='#D4BE98'
 color15='#DDA592'
-FAST_HIGHLIGHT_STYLES+=(
-  'command'        'fg=#A9B665'
-  'alias'          'fg=#A9B665'
-  'builtin'        'fg=#A9B665'
-  'function'       'fg=#A9B665'
-  'keyword'        'fg=#D3869B'
-  'string'         'fg=#D8A657'
-  'single-quoted-argument' 'fg=#D8A657'
-  'double-quoted-argument' 'fg=#D8A657'
-  'path'           'fg=#7DAEA3'
-  'comment'        'fg=#928374,italic'
-)
 #vim:filetype=zsh

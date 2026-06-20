@@ -9,7 +9,7 @@
 
 # PATH & ENV Var
 export ZSH_RAM_CACHE="/dev/shm/zsh-$USER"
-mkdir -p "$ZSH_RAM_CACHE"
+mkdir -p "$ZSH_RAM_CACHE" 
 
 export GPG_TTY="${TTY:-$(tty)}"
 export COLORTERM=truecolor

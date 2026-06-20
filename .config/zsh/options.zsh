@@ -42,8 +42,8 @@ SAVEHIST=10000
 
 # Autosuggestion
 ZSH_AUTOSUGGEST_USE_ASYNC="true"
-ZSH_HIGHLIGHT_HIGHLIGHTERS=(main brackets pattern cursor regexp root line)
-ZSH_HIGHLIGHT_MAXLENGTH=512
+# ZSH_HIGHLIGHT_HIGHLIGHTERS=(main brackets pattern cursor regexp root line)
+# ZSH_HIGHLIGHT_MAXLENGTH=512
 ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=$color8,bold"
 #could break:
 ZSH_AUTOSUGGEST_STRATEGY=(history completion match_prev_cmd)
