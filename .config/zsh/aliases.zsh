@@ -10,7 +10,7 @@ alias mgcb_editor='dotnet mgcb-editor Content/Content.mgcb'
 #platform specific:
 bgr() { feh --bg-scale "$(command find ~/Pictures/wallpaper -type f | shuf -n1)"; }
 alias icat='kitten icat'
-alias lynx='lynx -vikeys'
+alias lynx='command lynx -vikeys'
 alias Prompt='PROMPT="%~ % "'
 alias emacst='emacsclient -a ''"'
 
@@ -68,8 +68,8 @@ alias zp='zip -r' # z <archive_compress> <file_list>
 alias sr='source ~/.config/zsh/env.zsh'
 alias ..="\cd .."
 alias ...='\cd ../../'
-alias ....='\cd ../../../'
-alias ....='\cd ../../../../'
+alias ....='\cd ../../..'
+alias .....='\cd ../../../../'
 alias psg="ps aux | grep -v grep | grep -i -e VSZ -e"
 alias md="mkdir -p"
 alias fm='yazi'
