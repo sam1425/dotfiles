@@ -9,9 +9,11 @@
 #                         ,d8P
 #                      `?888P'
 
-function smart-k-up() {
-    if [[ -n "$POSTDISPLAY" && $CURSOR -eq $#BUFFER ]]; then
-        zle autosuggest-accept
+function _smart-k-up() {
+    if [[ -n "$POSTDISPLAY" ]]; then
+        BUFFER=$BUFFER$POSTDISPLAY
+        CURSOR=$#BUFFER
+        POSTDISPLAY=
     elif [[ -n "${widgets[history-substring-search-up]}" ]]; then
         zle history-substring-search-up
     else
@@ -20,7 +22,7 @@ function smart-k-up() {
 }
 
 
-function smart-j-down() {
+function _smart-j-down() {
     if [[ -n "${widgets[history-substring-search-down]}" ]]; then
         zle history-substring-search-down
     else
@@ -52,15 +54,15 @@ zle -N _fzf_find_file
 # --- Binds ---
 function zvm_after_init() {
 
-    zvm_define_widget smart-k-up
-    zvm_define_widget smart-j-down
+    zvm_define_widget _smart-k-up
+    zvm_define_widget _smart-j-down
 
-    zvm_bindkey viins '^K' smart-k-up
-    zvm_bindkey viins '^J' smart-j-down
-    zvm_bindkey vicmd '^K' smart-k-up
-    zvm_bindkey vicmd '^J' smart-j-down
-    zvm_bindkey vicmd 'k' smart-k-up
-    zvm_bindkey vicmd 'j' smart-j-down
+    zvm_bindkey viins '^K' _smart-k-up
+    zvm_bindkey viins '^J' _smart-j-down
+    zvm_bindkey vicmd '^K' _smart-k-up
+    zvm_bindkey vicmd '^J' _smart-j-down
+    zvm_bindkey vicmd 'k' _smart-k-up
+    zvm_bindkey vicmd 'j' _smart-j-down
 
     zvm_bindkey viins '^B' _sudo_command_line
     zvm_bindkey vicmd '^B' _sudo_command_line
