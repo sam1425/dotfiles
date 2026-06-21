@@ -263,6 +263,7 @@ run() {
         nim)  nim c -r "$file" "${@}" ;;
         elx|ex|exs) elixir "$file" "${@}" ;;
         qml)  qs -p "$file" "${@}" ;;
+        c3)   c3c compile-run "$file" -- "${@}" ;;
         ml)   ocaml "$file" "${@}" ;;
         *)    echo "Error: Unsupported extension '.$ext'" ;;
     esac
