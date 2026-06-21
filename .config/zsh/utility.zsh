@@ -256,7 +256,7 @@ run() {
         go)   go run "$file" "${@}" ;;
         rs)   cargo script "$file" "${@}" ;;
         py)   pypy "$file" "${@}" ;;
-        rb)   ruby "$file" "${@}" ;;
+        rb)   ruby --jit "$file" "${@}" ;;
         java) javac "$file" && java "$filename" "${@}" ;;
         lua)  lua "$file" "${@}" ;;
         sh)   bash "$file" "${@}" ;;
