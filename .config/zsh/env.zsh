@@ -89,6 +89,7 @@ export FZF_DEFAULT_OPTS="
   --border horizontal
   --height 40"
 
+
 # ZSH-VI-MODE plugin
 export ZVM_CURSOR_STYLE_ENABLED=true
 export ZVM_SYSTEM_CLIPBOARD_ENABLED=true
