@@ -158,7 +158,7 @@ bindsym $mod+Shift+k focus up
 bindsym $mod+Shift+l focus right
 
 #togle picom
-bindsym $mod+p exec bash -c 'pgrep -x picom && pkill picom || picom --experimental-backends -b'
+bindsym $mod+p exec bash -c 'pgrep -x picom && pkill picom || picom -b'
 
 # alternatively, you can use the cursor keys:
 bindsym $mod+Left focus left
