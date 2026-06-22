@@ -224,6 +224,6 @@ if !has('gui_running')
     let &t_SR = "\<Esc>[4 q" " Replace
 endif
 
-let g:hardtime_default_on = 1
+" let g:hardtime_default_on = 1
 
 set fillchars=eob:\ 
