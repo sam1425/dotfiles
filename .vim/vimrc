@@ -8,34 +8,60 @@ Plug 'tribela/vim-transparent'
 Plug 'sheerun/vim-polyglot'
 Plug 'mg979/vim-visual-multi', {'branch': 'master'}
 Plug 'machakann/vim-highlightedyank'
-Plug 'cofyc/vim-uncrustify'
 Plug 'tpope/vim-commentary'
 Plug 'takac/vim-hardtime'
 Plug 'rhysd/clever-f.vim'
 Plug 'tpope/vim-surround'
 Plug 'yukimura1227/vim-yazi'
 Plug 'wellle/targets.vim'
-" Plug 'christoomey/vim-system-copy'
 Plug 'tpope/vim-repeat'
 Plug 'inkarkat/vim-ReplaceWithRegister'
 Plug 'c3lang/editor-plugins', { 'rtp': 'vim' } " Official C3 syntax
 Plug 'zah/nim.vim'                        " Official Nim syntax
-Plug 'clojure-vim/clojure.vim' " Clojure syntax, matching, and indentation 
+Plug 'clojure-vim/clojure.vim' " Clojure syntax, matching, and indentation
 Plug 'junegunn/fzf.vim'
 Plug 'tpope/vim-sleuth'
+Plug 'google/vim-maktaba'
+Plug 'google/vim-codefmt'
 
 call plug#end()
 "Plug 'wikitopian/hardmode'
 "Plug 'morhetz/gruvbox'
 "Plug 'plasticboy/vim-markdown'
 
-augroup uncrustify_maps
+" ========================================
+" Auto-formatting with Google codefmt
+" ========================================
+" Clang-format with Google style
+let g:codefmt_clang_format_style = 'Google'
+" Java - point to our wrapper script
+let g:codefmt_google_java_executable = 'google-java-format'
+" YAPF config
+let g:codefmt_yapf_executable = 'yapf'
+
+" Override default formatters
+augroup codefmt_mappings
   autocmd!
-  autocmd FileType c   nnoremap <buffer> <C-f> :call Uncrustify('c')<CR>
-  autocmd FileType c   vnoremap <buffer> <C-f> :call RangeUncrustify('c')<CR>
-  autocmd FileType cpp nnoremap <buffer> <C-f> :call Uncrustify('cpp')<CR>
-  autocmd FileType cpp vnoremap <buffer> <C-f> :call RangeUncrustify('cpp')<CR>
+  autocmd FileType c,cpp let b:codefmt_formatter = 'clang-format'
+  autocmd FileType python let b:codefmt_formatter = 'yapf'
+  autocmd FileType java let b:codefmt_formatter = 'google-java-format'
+  autocmd FileType javascript,javascriptreact,typescript,typescriptreact let b:codefmt_formatter = 'prettier'
+  autocmd FileType go let b:codefmt_formatter = 'gofmt'
+  autocmd FileType rust let b:codefmt_formatter = 'rustfmt'
+  autocmd FileType dart let b:codefmt_formatter = 'dartfmt'
+  autocmd FileType ruby let b:codefmt_formatter = 'rubocop'
+  autocmd FileType sh,zsh,bash let b:codefmt_formatter = 'shfmt'
 augroup END
+
+" Auto-format on save
+augroup autoformat_save
+  autocmd!
+  autocmd BufWritePre *.c,*.h,*.cpp,*.hpp,*.cc,*.cxx,*.java,*.py,*.js,*.jsx,*.ts,*.tsx,*.json,*.css,*.html,*.md,*.go,*.rs,*.dart,*.rb,*.sh FormatCode
+augroup END
+
+" Keybinding: <C-f> formats current file
+nnoremap <silent> <C-f> :FormatCode<CR>
+vnoremap <silent> <C-f> :FormatCode<CR>
 
 " autocmd FileType c,cpp call AutoPairsInit()
 
@@ -48,9 +74,7 @@ autocmd VimEnter * if argc() == 1 && isdirectory(argv(0)) |
   \ endif
 command! MakeTags !ctags -R .
 
-let g:uncrustify_config_path = expand('~/.config/uncrustify/uncrustify.cfg')
-let g:uncrustify_lang_c   = 'c'
-let g:uncrustify_lang_cpp = 'cpp'
+
 
 syntax on
 filetype plugin indent on
