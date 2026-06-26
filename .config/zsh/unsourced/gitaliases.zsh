@@ -15,6 +15,7 @@ alias gac='git add -A && git commit -m'
 alias ge='git-edit-new'
 alias commit="git add . && git commit -m"
 alias push="git push"
+alias pull="git pull"
 alias git-rm="git ls-files --deleted -z | xargs -0 git rm"
 alias g=git
 alias ga='git add'
