@@ -53,12 +53,6 @@ augroup codefmt_mappings
   autocmd FileType sh,zsh,bash let b:codefmt_formatter = 'shfmt'
 augroup END
 
-" Auto-format on save
-augroup autoformat_save
-  autocmd!
-  autocmd BufWritePre *.c,*.h,*.cpp,*.hpp,*.cc,*.cxx,*.java,*.py,*.js,*.jsx,*.ts,*.tsx,*.json,*.css,*.html,*.md,*.go,*.rs,*.dart,*.rb,*.sh FormatCode
-augroup END
-
 " Keybinding: <C-f> formats current file
 nnoremap <silent> <C-f> :FormatCode<CR>
 vnoremap <silent> <C-f> :FormatCode<CR>
