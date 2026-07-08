@@ -4,7 +4,6 @@
 	name = c0mplex
 [core]
     pager = delta
-    fsmonitor = true
     excludesfile = ~/.gitignore_global
 [delta]
     navigate = true

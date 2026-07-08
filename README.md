@@ -49,3 +49,4 @@ git submodule update --remote --recursive
 
 credits:
 - zsh config based on [yoru's](https://github.com/raexera/yoru)
+
