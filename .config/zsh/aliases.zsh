@@ -99,7 +99,18 @@ alias cat="bat --color=always --plain --theme=gruvbox-dark"
 alias bat="bat --color=always --theme=gruvbox-dark"
 alias mv='mv -iv'
 alias cp='cp -ivr'
-alias copy="xclip -selection clipboard -i"
+copy() {
+  if command -v wl-copy &>/dev/null; then
+    wl-copy "$@"
+  elif command -v xclip &>/dev/null; then
+    xclip -selection clipboard -i "$@"
+  elif command -v pbcopy &>/dev/null; then
+    pbcopy "$@"
+  else
+    echo "Error: No clipboard manager found (install wl-clipboard, xclip, or pbcopy)" >&2
+    return 1
+  fi
+}
 alias rmvr='rm -vr'
 alias xprop='xprop -id $(slop -f "%i" -b 2 -p -2 -c 0.2,0.51,0.45,1 2>/dev/null)'
 

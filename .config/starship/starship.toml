@@ -71,7 +71,7 @@ style = "bg:color_blue fg:color_fg0"
 format = '[ $symbol$branch ]($style)'
 
 [custom.git_dot]
-command = '$HOME/Documents/Programming/c/scratch/slop/slop'
+command = '$HOME/.local/bin/slop'
 format  = '[$output]($style)'
 style   = 'bg:color_blue'
 when    = 'true'

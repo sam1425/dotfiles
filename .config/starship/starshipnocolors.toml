@@ -51,7 +51,7 @@ style = "fg:color_blue"
 format = '[$symbol$branch ]($style)'
 
 [custom.git_dot]
-command = '$HOME/Documents/Programming/c/slop/gitstatus'
+command = '$HOME/.local/bin/gitstatus'
 when    = 'git rev-parse --is-inside-work-tree 2>/dev/null'
 format  = '[$output ]($style)'
 style   = 'fg:color_blue'

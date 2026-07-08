@@ -4,6 +4,8 @@
 	name = c0mplex
 [core]
     pager = delta
+    fsmonitor = true
+    excludesfile = ~/.gitignore_global
 [delta]
     navigate = true
     dark = true
@@ -22,6 +24,8 @@
 	prompt = false
 [alias]
     start = !git checkout master && git pull && git clean -fd
+    amend = commit --amend --no-edit
+    undo = reset HEAD~1 --mixed
     cleanall = git clean -fdx
     tree = log --graph --decorate --pretty=oneline --abbrev-commit --all
 	aa = add --all
@@ -61,15 +65,21 @@
 	autocorrect = 1
 [commit]
 	gpgsign = false
+	verbose = true
 [pull]
 	rebase = true
 [diff]
 	colormoved = dimmed-zebra
+	algorithm = histogram
+[fetch]
+	prune = true
 [rebase]
 	autosquash = true
 	autoStash = true
+	abbreviateCommands = true
 [rerere]
 	enabled = true
+	autoupdate = true
 [column]
 	ui = auto
 [branch]

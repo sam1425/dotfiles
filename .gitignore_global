@@ -1,0 +1,27 @@
+# Compiled Source
+*.class
+*.pyc
+*.pyo
+
+# System Junk
+.DS_Store
+Thumbs.db
+
+# IDE & Editor Metadata
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Logs & Debugging
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Packages / Env Files (local overrides)
+node_modules/
+.env.local
+.env.*.local
