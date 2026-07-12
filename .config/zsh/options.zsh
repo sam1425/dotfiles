@@ -88,4 +88,28 @@ NOMATCH
 EQUALS
 EOF
 
+# --- fzf-tab completions styling & previews ---
+zstyle ':completion:*' menu no
+zstyle ':fzf-tab:*' use-fzf-default-opts yes
+zstyle ':fzf-tab:*' fzf-flags '--bind=tab:down,btab:up'
+zstyle ':completion:*:descriptions' format '[%d]'
+zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
+
+# Previews
+zstyle ':fzf-tab:complete:*:*' fzf-preview \
+  'bat --color=always --style=numbers --line-range=:500 $realpath 2>/dev/null || eza -1 --color=always $realpath 2>/dev/null'
+zstyle ':fzf-tab:complete:(cd|__zoxide_z):*' fzf-preview 'eza -1 --color=always $realpath 2>/dev/null'
+zstyle ':fzf-tab:complete:(-command-|-parameter-|-brace-parameter-|export|unset|expand):*' fzf-preview 'echo ${(P)word}'
+zstyle ':fzf-tab:complete:kill:*' fzf-preview 'ps -p $word -o cmd= 2>/dev/null'
+zstyle ':fzf-tab:complete:kill:*' fzf-flags '--preview-window=down:3:wrap'
+zstyle ':fzf-tab:complete:git-checkout:*' fzf-preview \
+  'case "$group" in
+     "modified file") git diff $word | delta ;;
+     "recent commit object name") git show --color=always $word ;;
+     *) git log --color=always $word ;;
+   esac'
+zstyle ':fzf-tab:complete:git-diff:*' fzf-preview 'git diff $word | delta'
+zstyle ':fzf-tab:complete:git-log:*' fzf-preview 'git log --color=always $word'
+
 # vim:filetype=zsh:nowrap
+
