@@ -83,11 +83,11 @@ export FZF_DEFAULT_OPTS="
   --color marker:#8ec07c
   --color border:#1e1e2e
   --color header:#fabd2f
-  --prompt '<3Ξ'
+  --prompt '<3 '
   --pointer '|>'
   --layout=reverse
   --border horizontal
-  --height 40"
+  --height=90%"
 
 
 # ZSH-VI-MODE plugin

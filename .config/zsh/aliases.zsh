@@ -86,6 +86,7 @@ alias pacpac="pacman -Qent"
 alias parucheck="paru -Gp"
 alias cleanpac='sudo pacman -Rns $(pacman -Qtdq); paru -c'
 alias installed="grep -i installed /var/log/pacman.log"
+alias unlock="sudo rm -f /var/lib/pacman/db.lck"
 alias ls="eza --icons --group-directories-first --git"
 alias l="ls -l"
 alias l.="ls -A | grep -E '^\.'"
