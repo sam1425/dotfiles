@@ -19,7 +19,7 @@ zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}' 'r:|[._-]=* r:|=*' 'l:
 zstyle ':completion:*' special-dirs true
 zstyle ':completion:*' use-cache yes
 zstyle ':completion:*' cache-path "$ZSH_RAM_CACHE/zcompcache"
-zstyle ':completion:*' menu select
+# menu select removed: conflicts with fzf-tab's 'menu no' below
 zstyle ':completion:*' rehash true
 zstyle ':completion:*' completer _expand _complete _ignored
 zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
@@ -90,8 +90,16 @@ EOF
 
 # --- fzf-tab completions styling & previews ---
 zstyle ':completion:*' menu no
-zstyle ':fzf-tab:*' use-fzf-default-opts yes
-zstyle ':fzf-tab:*' fzf-flags '--bind=tab:down,btab:up'
+# Disable use-fzf-default-opts: FZF_DEFAULT_OPTS contains --height=90%, --border, and
+# --layout=reverse which conflict with fzf-tab's own internal height math (capped at
+# LINES/3*2) and its hardcoded --layout=reverse. The collision collapsed the list to 1 line.
+zstyle ':fzf-tab:*' use-fzf-default-opts no
+# Port colors, prompt & pointer from FZF_DEFAULT_OPTS into fzf-tab-specific flags.
+# fzf-tab appends $fzf_flags last so these safely override its defaults.
+zstyle ':fzf-tab:*' fzf-flags \
+  '--color=fg:#ebdbb2,fg+:#689d6a,bg+:#282828,hl:#b16286,hl+:#d3869b,info:#cba6f7,prompt:#458588,spinner:#cc241d,pointer:#fe8019,marker:#8ec07c,border:#1e1e2e,header:#fabd2f' \
+  '--prompt=<3Ξ' '--pointer=|>' \
+  '--bind=tab:down,btab:up'
 zstyle ':completion:*:descriptions' format '[%d]'
 zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
 
