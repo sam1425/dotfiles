@@ -210,6 +210,55 @@ nnoremap <C-t> xp
 cnoremap <C-j> <down>
 cnoremap <C-k> <up>
 nnoremap gt <C-]>
+nnoremap gd <C-]>
+
+" Load the built-in man page viewer plugin to enable the :Man command
+runtime ftplugin/man.vim
+
+function! SmartKeywordLookup()
+    let l:word = expand('<cword>')
+    let l:ft = &filetype
+
+    if l:ft == 'vim'
+        execute 'help ' . l:word
+    elseif l:ft == 'go'
+        execute 'term go doc ' . l:word
+    elseif l:ft == 'python'
+        execute 'term pydoc ' . l:word
+    elseif l:ft == 'ruby'
+        execute 'term ri ' . l:word
+    elseif l:ft == 'c' || l:ft == 'cpp'
+        let l:man_exists = system('man -w ' . l:word)
+        if v:shell_error == 0
+            execute 'Man ' . l:word
+        else
+            silent execute '!zeal --query "cpp:' . l:word . '" &'
+        endif
+    elseif l:ft == 'rust'
+        silent execute '!zeal --query "rust:' . l:word . '" &'
+    elseif l:ft == 'zig'
+        silent execute '!zeal --query "zig:' . l:word . '" &'
+    elseif l:ft == 'c3'
+        silent execute '!zeal --query "c3:' . l:word . '" &'
+    elseif l:ft == 'javascript' || l:ft == 'typescript'
+        silent execute '!zeal --query "javascript:' . l:word . '" &'
+    elseif l:ft == 'clojure'
+        silent execute '!zeal --query "clojure:' . l:word . '" &'
+    elseif l:ft == 'erlang'
+        silent execute '!zeal --query "erlang:' . l:word . '" &'
+    else
+        let l:man_exists = system('man -w ' . l:word)
+        if v:shell_error == 0
+            execute 'Man ' . l:word
+        else
+            silent execute '!zeal --query "' . l:word . '" &'
+        endif
+    endif
+    redraw!
+endfunction
+
+nnoremap <silent> K :call SmartKeywordLookup()<CR>
+
 inoremap {<CR> {<CR>}<C-f><Esc>O
 " inoremap {<CR> {<CR>}<Esc>O
 
