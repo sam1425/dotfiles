@@ -243,7 +243,7 @@ run() {
     shift # Removes $1 (the file). Now "${@}" contains ONLY your extra flags/arguments.
 
     case "$ext" in
-        clj)  clojure -M "$file" "${@}" ;;
+        clj)  clojure "$file" "${@}" ;;
         lisp) sbcl --script "$file" "${@}" ;;
         zig)  zig run "$file" -- "${@}" ;; # Zig requires -- to separate runner flags from binary args
         odin) odin run "$file" -file -- "${@}" ;;
