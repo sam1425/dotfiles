@@ -59,9 +59,9 @@ vnoremap <silent> <C-f> :FormatCode<CR>
 
 " autocmd FileType c,cpp call AutoPairsInit()
 
-"fix problem with st/vim comment if you are not on st
-autocmd FocusLost * call system('xclip -selection clipboard -in', @+)
-autocmd TextYankPost * call system('xclip -selection clipboard -in', @+)
+" set clipboard=unnamed,unnamedplus (below) already syncs yanks/pastes to the
+" X clipboard, so clipmenu sees every yank. No extra xclip call is needed, and
+" a FocusLost hook could write an empty selection and clear the clipboard.
 "If called on a directory then open yazi
 autocmd VimEnter * if argc() == 1 && isdirectory(argv(0)) |
   \ call feedkeys(":Yazi\<CR>") |

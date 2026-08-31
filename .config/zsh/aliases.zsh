@@ -101,16 +101,24 @@ alias bat="bat --color=always --theme=gruvbox-dark"
 alias mv='mv -iv'
 alias cp='cp -ivr'
 copy() {
-  if command -v wl-copy &>/dev/null; then
-    wl-copy "$@"
-  elif command -v xclip &>/dev/null; then
-    xclip -selection clipboard -i "$@"
-  elif command -v pbcopy &>/dev/null; then
-    pbcopy "$@"
-  else
-    echo "Error: No clipboard manager found (install wl-clipboard, xclip, or pbcopy)" >&2
-    return 1
-  fi
+  case "$XDG_SESSION_TYPE" in
+    wayland)
+      if command -v wl-copy &>/dev/null; then
+        wl-copy "$@"
+      else
+        echo "Error: wl-copy not found (install wl-clipboard)" >&2
+        return 1
+      fi
+      ;;
+    *)
+      if command -v xclip &>/dev/null; then
+        xclip -selection clipboard -i "$@"
+      else
+        echo "Error: xclip not found (install xclip)" >&2
+        return 1
+      fi
+      ;;
+  esac
 }
 alias rmvr='rm -vr'
 alias xprop='xprop -id $(slop -f "%i" -b 2 -p -2 -c 0.2,0.51,0.45,1 2>/dev/null)'
