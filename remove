@@ -1,32 +1,44 @@
 #!/usr/bin/env bash
-# remove - Unlink dotfiles using GNU Stow
-#
-# Usage: ./remove [mode]
-#
-# Modes:
-#   sys  - Unlink system dotfiles from the root (/) directory.
-#          Requires sudo privileges.
-#   all  - Unlink base dotfiles, system dotfiles, and everything in .files/.
-#   (none) - Default mode. Unlinks only base dotfiles in the current directory.
-set -e
+# Unlink dotfiles managed by GNU Stow.
+# Usage: ./remove [sys|all]
+set -euo pipefail
 
-MODE=$1
+usage() {
+    cat <<'EOF'
+Usage: ./remove [sys|all]
 
-if [[ "$MODE" == "sys" ]]; then
-    SYSTEMDIR=".files/system"
-    sudo stow -D -d $SYSTEMDIR -t / .
-    echo "System dotfiles unlinked"
-elif [[ "$MODE" == "all" ]]; then
-    DIR="."
-    FULLDIR=".files"
-    SYSTEMDIR="./.files/system"
-    stow -D --ignore="$FULLDIR" "$DIR"
-    sudo stow -D -t / -d $SYSTEMDIR
-    stow -D --ignore="$SYSTEMDIR" "$FULLDIR"
-    echo "ALL Dotfiles unlinked"
-    exit 0
-else
-    DIR="."
-    stow -D --ignore='.files' "$DIR"
-    echo "Dotfiles unlinked"
-fi
+Without a mode, unlink the base dotfiles from $HOME.
+sys unlinks only .files/system from /; all unlinks both sets.
+EOF
+}
+
+repo_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+cd "$repo_dir"
+
+mode=${1-}
+case "$mode" in
+    -h|--help) usage; exit 0 ;;
+    ''|sys|all) ;;
+    *) echo "Unknown argument: $mode" >&2; usage >&2; exit 2 ;;
+esac
+
+command -v stow &>/dev/null || { echo 'stow is required to remove these links.' >&2; exit 1; }
+system_dir=.files/system
+
+remove_base() { stow -D -t "$HOME" --ignore='.files' .; }
+remove_system() {
+    [[ -d "$system_dir" ]] || { echo "Missing system package directory: $system_dir" >&2; exit 1; }
+    sudo stow -D -d "$system_dir" -t / .
+}
+remove_extra_home() { stow -D --ignore='system' --ignore='suckless' -d .files -t "$HOME" .; }
+
+case "$mode" in
+    '') remove_base; echo 'Base dotfiles unlinked.' ;;
+    sys) remove_system; echo 'System dotfiles unlinked.' ;;
+    all)
+        remove_extra_home
+        remove_system
+        remove_base
+        echo 'All dotfiles unlinked.'
+        ;;
+esac

@@ -78,7 +78,7 @@ if [ $must_append_position_flags -ne 0 ]; then
     set -- "$@" -X "$x_offset"
 
     y_offset="${bar_geometry##*+}"
-    [ "$y_offset" -lt 0] && y_offset="$x_offset"
+    [ "$y_offset" -lt 0 ] && y_offset="$x_offset"
     set -- "$@" -Y "$y_offset"
 fi
 

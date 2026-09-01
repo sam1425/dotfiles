@@ -25,9 +25,8 @@ This repo uses [GNU Stow](https://www.gnu.org/software/stow/) to manage symlinks
 
 ```bash
 # Clone the repo with submodules
-git clone --recurse-submodules --depth=1 https://github.com/sam1425/dot_files.git && cd dotfiles
-# Initialize submodules
-git submodule update --init --recursive
+git clone --recurse-submodules --depth=1 https://github.com/sam1425/dot_files.git dotfiles
+cd dotfiles
 ```
 
 ### Update Submodules
@@ -44,9 +43,26 @@ git submodule update --remote --recursive
 ./install all
 ```
 
+The installer is safe by default: it stops on conflicts instead of changing
+either your existing files or the repository. Review the conflict and move it
+aside, or explicitly opt into adoption only after backing it up:
+
+```bash
+./install --adopt
+```
+
+`install` and `remove` can be run from any directory. Use `./install --help`
+or `./remove --help` for the available modes.
+
+### Dependencies
+
+The baseline package manifests live in [packages](packages). Install the
+manifest for your distribution before running the installer, then add the
+optional packages that match the applications you use. They are intentionally
+reviewable lists rather than an installer that changes your system.
+
 ---
 *feel free to copy what you like!*
 
 credits:
 - zsh config based on [yoru's](https://github.com/raexera/yoru)
-

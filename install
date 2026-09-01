@@ -1,89 +1,95 @@
 #!/usr/bin/env bash
-# install - Symlink dotfiles using GNU Stow
-#
-# Usage: ./install [mode]
-#
-# Modes:
-#   sys  - Symlink system dotfiles from .files/system to the root (/) directory.
-#          Requires sudo privileges.
-#   all  - Symlink base dotfiles, system dotfiles, and everything in .files/.
-#   (none) - Default mode. Symlinks only base dotfiles in the current directory,
-#            ignoring the .files/ directory.
-#
-# This script will check for 'stow' and attempt to install it using the 
-# system's package manager if it is not installed.
-set -e
+# Symlink dotfiles using GNU Stow.
+# Usage: ./install [--adopt] [sys|all]
+set -euo pipefail
 
-gum_confirm() {
+usage() {
+    cat <<'EOF'
+Usage: ./install [--adopt] [sys|all]
+
+Without a mode, install the base dotfiles into $HOME.
+sys installs only .files/system into /; all installs both sets.
+--adopt imports conflicting target files into this repository. Use it only
+after reviewing a dry run and committing or backing up local changes.
+EOF
+}
+
+confirm() {
     if command -v gum &>/dev/null; then
         gum confirm "$1" --default="$2"
     else
-        local prompt="$1"
-        local default="$2"
-        if [[ "$default" == "true" ]]; then
-            prompt="$prompt [Y/n] "
-        else
-            prompt="$prompt [y/N] "
-        fi
-        read -r -p "$prompt"
-        [[ "$REPLY" =~ ^[Yy]$ ]] || [[ -z "$REPLY" && "$default" == "true" ]]
+        local prompt=$1 default=$2 reply
+        [[ "$default" == true ]] && prompt+=" [Y/n] " || prompt+=" [y/N] "
+        read -r -p "$prompt" reply
+        [[ "$reply" =~ ^[Yy]$ ]] || [[ -z "$reply" && "$default" == true ]]
     fi
 }
 
+install_stow() {
+    [[ -f /etc/os-release ]] || { echo 'Cannot identify this distribution; install stow manually.' >&2; exit 1; }
+    # shellcheck disable=SC1091
+    . /etc/os-release
+    case "$ID" in
+        arch|artix) sudo pacman -S --needed stow ;;
+        debian|ubuntu|pop|mint) sudo apt-get update -qq; sudo apt-get install -y stow ;;
+        fedora|nobara) sudo dnf install -y stow ;;
+        void) sudo xbps-install -Sy stow ;;
+        *) echo "Unsupported distribution: $ID. Install stow manually." >&2; exit 1 ;;
+    esac
+}
+
+repo_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+cd "$repo_dir"
+
+adopt=false
+mode=
+while (($#)); do
+    case "$1" in
+        --adopt) adopt=true ;;
+        sys|all)
+            [[ -z "$mode" ]] || { usage >&2; exit 2; }
+            mode=$1
+            ;;
+        -h|--help) usage; exit 0 ;;
+        *) echo "Unknown argument: $1" >&2; usage >&2; exit 2 ;;
+    esac
+    shift
+done
+
 if ! command -v stow &>/dev/null; then
-    echo "stow is not installed."
-    if gum_confirm "Install stow?" "true"; then
-        [[ -f /etc/os-release ]] && . /etc/os-release
-        case "$ID" in
-            arch|artix)
-                sudo pacman -S --noconfirm stow ;; debian|ubuntu|pop|mint)
-                sudo apt-get update -qq && sudo apt-get install -y stow ;;
-            fedora|nobara)
-                sudo dnf install -y stow ;;
-            void)
-                sudo xbps-install -Sy stow ;;
-            *)
-                echo "Package manager not supported. Please install 'stow' manually."
-                exit 1 ;;
-        esac
-    else
-        exit 1
-    fi
+    confirm 'stow is not installed. Install it now?' true || exit 1
+    install_stow
 fi
 
-MODE=$1
+stow_options=()
+if "$adopt"; then
+    confirm 'Adopt conflicts into this repository? This modifies tracked files.' false || exit 1
+    stow_options+=(--adopt)
+fi
 
-if [[ "$MODE" == "sys" ]]; then
-    SYSTEMDIR=".files/system"
-    sudo stow --adopt -d $SYSTEMDIR -t / .
-    echo "System dotfiles Symlinked"
-elif [[ "$MODE" == "all" ]]; then
-    DIR="."
-    FULLDIR=".files"
-    SYSTEMDIR=".files/system"
-    if [[ -d $SYSTEMDIR  ]]; then
-        stow --adopt -t ~ .
-        sudo stow --adopt -d $SYSTEMDIR -t / $DIR
-        stow --adopt --ignore='system' --ignore='suckless' -d "$FULLDIR" $DIR
-        echo "ALL Dotfiles Symlinked"
-        if gum_confirm "Build and install suckless tools (dwm, st-flexipatch, dwmblocks-async)?" "false"; then
-            SUCK_DIR="$FULLDIR/suckless"
+system_dir=.files/system
+install_base() { stow "${stow_options[@]}" -t "$HOME" --ignore='.files' .; }
+install_system() {
+    [[ -d "$system_dir" ]] || { echo "Missing system package directory: $system_dir" >&2; exit 1; }
+    sudo stow "${stow_options[@]}" -d "$system_dir" -t / .
+}
+install_extra_home() { stow "${stow_options[@]}" --ignore='system' --ignore='suckless' -d .files -t "$HOME" .; }
+
+case "$mode" in
+    '') install_base; echo 'Base dotfiles symlinked.' ;;
+    sys) install_system; echo 'System dotfiles symlinked.' ;;
+    all)
+        install_base
+        install_system
+        install_extra_home
+        echo 'All dotfiles symlinked.'
+        if confirm 'Build and install suckless tools (dwm, st-flexipatch, dwmblocks-async)?' false; then
             for dir in dwm st-flexipatch dwmblocks-async; do
-                if [[ -d "$SUCK_DIR/$dir" ]]; then
-                    echo "Building $dir..."
-                    make -C "$SUCK_DIR/$dir" clean 2>/dev/null
-                    make -C "$SUCK_DIR/$dir" -j"$(nproc)"
-                    sudo make -C "$SUCK_DIR/$dir" install
-                    echo "$dir installed."
-                else
-                    echo "Skipping $dir — directory not found."
-                fi
+                [[ -d ".files/suckless/$dir" ]] || { echo "Skipping $dir — directory not found."; continue; }
+                make -C ".files/suckless/$dir" clean
+                make -C ".files/suckless/$dir" -j"$(nproc)"
+                sudo make -C ".files/suckless/$dir" install
             done
         fi
-    fi
-    exit 0
-else
-    DIR="."
-    stow --adopt -t ~ --ignore='.files' .
-    echo "Dotfiles Symlinked"
-fi
+        ;;
+esac

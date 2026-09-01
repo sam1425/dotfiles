@@ -1,19 +1,12 @@
-
 #!/usr/bin/env bash
-
-SCRIPTS="$(fd --search-path ~/.scripts/)"
-
-echo "$SCRIPTS" | awk -F  '/' '{print $NF}' | dmenu 
-
+set -euo pipefail
 
 check_deps() {
     for cmd in "$@"; do
-        command -v "$cmd" &>/dev/null || { notify-send "Missing: $cmd"; exit 1; }
+        command -v "$cmd" &>/dev/null || { notify-send "Missing: $cmd"; return 1; }
     done
 }
 
-main(){
-    check_deps maim slop
-}
+check_deps fd dmenu maim slop
 
-main "$@"
+fd --search-path "$HOME/.scripts" | awk -F/ '{print $NF}' | dmenu

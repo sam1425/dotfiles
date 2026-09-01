@@ -28,7 +28,9 @@ versions=("$HOME/.local/share/gem/ruby/"*(/N))
 if (( $#versions )); then
   PATH="${versions[-1]}/bin:$PATH"
 fi
-export LUA_PATH="$(luarocks path --lr-path)"
+if (( $+commands[luarocks] )); then
+  export LUA_PATH="$(luarocks path --lr-path)"
+fi
 export GOPATH="$HOME/.local/share/go/pkg"
 export PATH="$GOPATH/bin:$PATH"
 export UNISON="$HOME/.config/unison"

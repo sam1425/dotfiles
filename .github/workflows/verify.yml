@@ -1,0 +1,28 @@
+name: Verify dotfiles
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - name: Install validators
+        run: sudo apt-get update && sudo apt-get install -y shellcheck stow zsh
+      - name: Check shell syntax
+        run: |
+          bash -n install remove .scripts/installdeps.sh
+          sh -n .scripts/bin/menu
+          zsh -n .zshrc .config/zsh/*.zsh .config/zsh/unsourced/*.zsh
+      - name: Lint maintained shell scripts
+        run: shellcheck -S warning install remove .scripts/installdeps.sh .scripts/bin/menu
+      - name: Simulate Stow operations
+        run: |
+          target_dir=$(mktemp -d)
+          stow --simulate -t "$target_dir" --ignore='.files' .
+          stow --simulate -d .files/system -t "$target_dir" .
+          stow --simulate --ignore='system' --ignore='suckless' -d .files -t "$target_dir" .
