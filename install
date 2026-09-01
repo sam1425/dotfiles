@@ -86,7 +86,7 @@ case "$mode" in
         if confirm 'Build and install suckless tools (dwm, st-flexipatch, dwmblocks-async)?' false; then
             for dir in dwm st-flexipatch dwmblocks-async; do
                 [[ -d ".files/suckless/$dir" ]] || { echo "Skipping $dir — directory not found."; continue; }
-                make -C ".files/suckless/$dir" clean
+                sudo make -C ".files/suckless/$dir" clean
                 make -C ".files/suckless/$dir" -j"$(nproc)"
                 sudo make -C ".files/suckless/$dir" install
             done
