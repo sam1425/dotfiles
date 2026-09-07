@@ -2,7 +2,7 @@
 
 # Level Library
 # https://level.io/library/script-linux-disk-cleanup
-# Optimized by Gemini CLI for performance
+# Optimized by Gemini CLI & Antigravity for safety & performance
 
 # Create log file
 LOG_FILE="/var/log/cleanup_$(date +%Y%m%d_%H%M).log"
@@ -11,6 +11,11 @@ if [ "$EUID" -ne 0 ]; then
     echo "Please run as root"
     exit 1
 fi
+
+# Detect actual user when invoked with sudo
+REAL_USER=${SUDO_USER:-$USER}
+USER_HOME=$(getent passwd "$REAL_USER" | cut -d: -f6)
+USER_HOME=${USER_HOME:-$HOME}
 
 log_message() {
     echo "$1" | tee -a "$LOG_FILE"
@@ -30,57 +35,116 @@ get_total_usage() {
 
 TEMP_PATHS=(
     "/tmp"
-    "$HOME/.cache"
-    "$HOME/.vim/filebackups"
-    "$HOME/.emacs.d/filebackups"
     "/var/tmp"
+    "$USER_HOME/.cache"
+    "$USER_HOME/.vim/filebackups"
+    "$USER_HOME/.emacs.d/filebackups"
     "/var/cache/pacman/pkg"
     "/var/log"
 )
 
 log_message "Server cleanup started at $(date)"
 log_message "Hostname: $(hostname)"
+log_message "Target User: $REAL_USER ($USER_HOME)"
 
 # Baseline usage
 USAGE_BEFORE=$(get_total_usage "${TEMP_PATHS[@]}")
 
-# 1. Specialized Cleanup (Package Manager)
-if command -v pacman >/dev/null 2>&1; then
+# 1. Package Manager Cleanup
+if command -v paccache >/dev/null 2>&1; then
+    log_message "Cleaning pacman cache (retaining last 2 versions)..."
+    paccache -r >/dev/null 2>&1
+    paccache -rfuk0 >/dev/null 2>&1
+elif command -v pacman >/dev/null 2>&1; then
     log_message "Cleaning pacman cache..."
     pacman -Scc --noconfirm >/dev/null 2>&1
-elif command -v apt-get >/dev/null 2>&1; then
-    log_message "Cleaning apt cache..."
-    apt-get clean >/dev/null 2>&1
 fi
 
-# 2. Specialized Cleanup (Logs)
+if command -v pacman >/dev/null 2>&1 && pacman -Qtdq >/dev/null 2>&1; then
+    log_message "Removing orphaned pacman packages..."
+    pacman -Rns $(pacman -Qtdq) --noconfirm >/dev/null 2>&1
+fi
+
+if command -v apt-get >/dev/null 2>&1; then
+    log_message "Cleaning apt cache..."
+    apt-get clean >/dev/null 2>&1
+    apt-get autoremove -y >/dev/null 2>&1
+fi
+
+if command -v flatpak >/dev/null 2>&1; then
+    log_message "Removing unused Flatpak runtimes..."
+    flatpak uninstall --unused -y >/dev/null 2>&1
+fi
+
+if command -v yay >/dev/null 2>&1; then
+    log_message "Cleaning yay AUR cache..."
+    sudo -u "$REAL_USER" yay -Sc --noconfirm >/dev/null 2>&1
+elif command -v paru >/dev/null 2>&1; then
+    log_message "Cleaning paru AUR cache..."
+    sudo -u "$REAL_USER" paru -Sc --noconfirm >/dev/null 2>&1
+fi
+
+# 2. Logs, Journald & Coredumps
+if command -v journalctl >/dev/null 2>&1; then
+    log_message "Vacuuming journald logs..."
+    journalctl --vacuum-time=30d >/dev/null 2>&1
+fi
+
+if [[ -d "/var/lib/systemd/coredump" ]]; then
+    log_message "Cleaning systemd coredumps (older than 7 days)..."
+    find /var/lib/systemd/coredump -type f -mtime +7 -delete 2>/dev/null
+fi
+
 if [[ -d "/var/log" ]]; then
     log_message "Cleaning /var/log (older than 30 days)..."
     find /var/log -type f \( -name "*.gz" -o -name "*.old" -o -name "*.log.*" \) -mtime +30 -delete 2>/dev/null
 fi
 
-# 3. General Cleanup for other paths
+# 3. User Space (Trash, Thumbnails)
+if [[ -d "$USER_HOME/.local/share/Trash" ]]; then
+    log_message "Cleaning Trash files older than 30 days..."
+    find "$USER_HOME/.local/share/Trash/files" -mindepth 1 -mtime +30 -delete 2>/dev/null
+    find "$USER_HOME/.local/share/Trash/info" -mindepth 1 -mtime +30 -delete 2>/dev/null
+fi
+
+if [[ -d "$USER_HOME/.cache/thumbnails" ]]; then
+    log_message "Cleaning thumbnail cache (older than 30 days)..."
+    find "$USER_HOME/.cache/thumbnails" -type f -mtime +30 -delete 2>/dev/null
+fi
+
+# 4. Developer Tool Caches
+if command -v pip >/dev/null 2>&1; then
+    log_message "Cleaning pip cache..."
+    sudo -u "$REAL_USER" pip cache purge >/dev/null 2>&1
+fi
+
+if [[ -x "$USER_HOME/.local/share/pnpm/pnpm" ]]; then
+    log_message "Pruning pnpm store..."
+    sudo -u "$REAL_USER" "$USER_HOME/.local/share/pnpm/pnpm" store prune >/dev/null 2>&1 || true
+elif command -v pnpm >/dev/null 2>&1; then
+    log_message "Pruning pnpm store..."
+    sudo -u "$REAL_USER" pnpm store prune >/dev/null 2>&1 || true
+fi
+
+if command -v npm >/dev/null 2>&1; then
+    log_message "Cleaning npm cache..."
+    sudo -u "$REAL_USER" npm cache clean --force >/dev/null 2>&1
+fi
+
+# 5. General Cleanup for Temp Paths
 for path in "${TEMP_PATHS[@]}"; do
-    # Skip /var/log and package caches as they are handled specially
     if [[ "$path" == "/var/log" || "$path" == "/var/cache/pacman/pkg" || "$path" == "/var/cache/apt/archives" ]]; then
         continue
     fi
     
     if [[ -d "$path" ]]; then
         log_message "Cleaning $path (files older than 7 days)..."
-        # Using -delete is much faster than piping to rm
         find "$path" -type f -mtime +7 -delete 2>/dev/null
-        # Clean empty directories as well
         find "$path" -mindepth 1 -type d -empty -delete 2>/dev/null
     fi
 done
 
-# 4. Docker/K8s/Journald
-if command -v journalctl >/dev/null 2>&1; then
-    log_message "Vacuuming journald logs..."
-    journalctl --vacuum-time=30d >/dev/null 2>&1
-fi
-
+# 6. Container Cleanup
 if command -v docker >/dev/null 2>&1; then
     log_message "Pruning Docker resources..."
     docker system prune -f --volumes >/dev/null 2>&1
@@ -102,5 +166,8 @@ log_message "Total space saved: ${TOTAL_GB} GB"
 log_message "Log file saved to: $LOG_FILE"
 
 log_message "Current disk usage:"
-#df -h | grep '^/' | tee -a "$LOG_FILE"
-dysk
+if command -v dysk >/dev/null 2>&1; then
+    dysk
+elif command -v df >/dev/null 2>&1; then
+    df -h | grep '^/' | tee -a "$LOG_FILE"
+fi
