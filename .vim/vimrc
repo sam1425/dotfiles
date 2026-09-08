@@ -263,15 +263,15 @@ inoremap {<CR> {<CR>}<C-f><Esc>O
 " inoremap {<CR> {<CR>}<Esc>O
 
 " st workaround
-nmap <Esc>; gcc
-vmap <Esc>; gc
-nmap <Esc>j :m .+1<CR>==
-nmap <Esc>k :m .-2<CR>==
-vmap <Esc>j :m '>+1<CR>gv=gv
-vmap <Esc>k :m '<-2<CR>gv=gv
+" nmap <Esc>; gcc
+" vmap <Esc>; gc
+" nmap <Esc>j :m .+1<CR>==
+" nmap <Esc>k :m .-2<CR>==
+" vmap <Esc>j :m '>+1<CR>gv=gv
+" vmap <Esc>k :m '<-2<CR>gv=gv
 " kitty / terminals that send proper M-
-" nmap <M-;> gcc
-" vmap <M-;> gc
+nmap <M-;> gcc
+vmap <M-;> gc
 " nnoremap <M-j> :m .+1<CR>==
 " nnoremap <M-k> :m .-2<CR>==
 " vnoremap <M-j> :m '>+1<CR>gv=gv
