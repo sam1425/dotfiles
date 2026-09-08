@@ -24,7 +24,7 @@
 [difftool]
 	prompt = false
 [alias]
-    start = !git checkout master && git pull && git clean -fd
+    start = "!f() { b=$(git symbolic-ref refs/remotes/origin/HEAD 2>/dev/null | sed 's@^refs/remotes/origin/@@'); git checkout \"${b:-main}\" && git pull && git clean -fd; }; f"
     amend = commit --amend --no-edit
     undo = reset HEAD~1 --mixed
     cleanall = git clean -fdx
@@ -51,7 +51,7 @@
 	lp = log -p --patience
 	ls = log --pretty=format:'%Cred%h%Creset %C(yellow)%ci%Creset %s - %C(bold blue)%an%Creset'
 	pf = push --force-with-lease
-	pum = pull upstream master
+	pum = "!f() { b=$(git symbolic-ref refs/remotes/upstream/HEAD 2>/dev/null | sed 's@^refs/remotes/upstream/@@'); git pull upstream \"${b:-main}\"; }; f"
 	slol = log --graph --decorate --pretty=oneline --abbrev-commit --simplify-by-decoration
 	slola = log --graph --decorate --pretty=oneline --abbrev-commit --simplify-by-decoration --all 
 	sloland = log --graph --all --pretty=format:'%C(yellow bold)%h%Creset (%Cblue%an%Creset)%C(magenta)% ar%Creset%C(green bold)% d%Creset: %s' --simplify-by-decoration
@@ -90,10 +90,10 @@
 
 [credential "https://github.com"]
 	helper = 
-	helper = !/usr/bin/gh auth git-credential
+	helper = !gh auth git-credential
 [credential "https://gist.github.com"]
 	helper = 
-	helper = !/usr/bin/gh auth git-credential
+	helper = !gh auth git-credential
 [url "git@github.com:"]
     insteadOf = "gh:"
 [url "https://github.com/"]

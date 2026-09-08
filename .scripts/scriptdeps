@@ -1,6 +1,212 @@
-# Necessary Arch Linux Packages
+#!/usr/bin/env bash
+# ==============================================================================
+# scriptdeps - Arch Linux Package Dependency Manager & Package List
 # Compiled based on ~/Documents/Programming, ~/.scripts, and ~/dotfiles
+# ==============================================================================
+# Usage:
+#   ./scriptdeps [OPTIONS]
+#
+# Options:
+#   -i, --install    Install missing packages (default)
+#   -c, --check      Check installation status of packages
+#   -l, --list       List all unique package names
+#   -d, --dry-run    Display installation command without executing
+#   -h, --help       Show this help message
+# ==============================================================================
 
+set -euo pipefail
+
+SCRIPT_FILE="${BASH_SOURCE[0]}"
+
+# Helper: Extract list of unique package names from this script
+get_packages() {
+    awk '
+        /^# --- PACKAGE LIST ---/ { in_pkgs = 1; next }
+        !in_pkgs { next }
+        /^[[:space:]]*#/ { next }
+        /^[[:space:]]*$/ { next }
+        { if (!seen[$1]++) print $1 }
+    ' "$SCRIPT_FILE"
+}
+
+# Helper: Extract missing package names (packages not installed locally)
+get_missing_packages() {
+    awk '
+        BEGIN {
+            while ("pacman -Qq 2>/dev/null" | getline pkg) {
+                installed[pkg] = 1
+            }
+        }
+        /^# --- PACKAGE LIST ---/ { in_pkgs = 1; next }
+        !in_pkgs { next }
+        /^[[:space:]]*#/ { next }
+        /^[[:space:]]*$/ { next }
+        {
+            p = $1
+            if (!seen[p]++) {
+                if (!(p in installed)) {
+                    print p
+                }
+            }
+        }
+    ' "$SCRIPT_FILE"
+}
+
+# Helper: Detect package manager (paru -> yay -> pacman)
+get_installer() {
+    if command -v paru &>/dev/null; then
+        echo "paru"
+    elif command -v yay &>/dev/null; then
+        echo "yay"
+    elif command -v pacman &>/dev/null; then
+        echo "sudo pacman"
+    else
+        echo "Error: No package manager (paru, yay, pacman) found." >&2
+        return 1
+    fi
+}
+
+check_packages() {
+    awk '
+        BEGIN {
+            while ("pacman -Qq 2>/dev/null" | getline pkg) {
+                installed[pkg] = 1
+            }
+        }
+        /^# --- PACKAGE LIST ---/ { in_pkgs = 1; next }
+        !in_pkgs { next }
+        /^[[:space:]]*#/ { next }
+        /^[[:space:]]*$/ { next }
+        {
+            p = $1
+            if (!seen[p]++) {
+                total++
+                if (p in installed) {
+                    inst++
+                } else {
+                    missing[m_count++] = p
+                }
+            }
+        }
+        END {
+            print "Checking installation status of " total " packages..."
+            print "--------------------------------------------------"
+            print "Total packages:     " total
+            print "Installed packages: " inst
+            print "Missing packages:   " m_count
+            print "--------------------------------------------------"
+            if (m_count > 0) {
+                print "Missing packages (" m_count "):"
+                for (i = 0; i < m_count; i++) {
+                    print "  - " missing[i]
+                }
+            } else {
+                print "All packages are installed!"
+            }
+        }
+    ' "$SCRIPT_FILE"
+}
+
+install_packages() {
+    local missing=()
+    mapfile -t missing < <(get_missing_packages)
+
+    if [ ${#missing[@]} -eq 0 ]; then
+        local total
+        total=$(get_packages | wc -l)
+        echo "All $total listed packages are already installed!"
+        exit 0
+    fi
+
+    local installer
+    installer=$(get_installer)
+
+    echo "Found ${#missing[@]} missing package(s)."
+    echo "Installing via: $installer -S --needed"
+    echo "Packages to install: ${missing[*]}"
+    echo ""
+
+    if [ "$installer" = "paru" ]; then
+        paru -S --needed "${missing[@]}"
+    elif [ "$installer" = "yay" ]; then
+        yay -S --needed "${missing[@]}"
+    else
+        sudo pacman -S --needed "${missing[@]}"
+    fi
+}
+
+dry_run() {
+    local missing=()
+    mapfile -t missing < <(get_missing_packages)
+
+    local installer
+    installer=$(get_installer)
+
+    if [ ${#missing[@]} -eq 0 ]; then
+        local total
+        total=$(get_packages | wc -l)
+        echo "Dry Run: All $total listed packages are already installed!"
+    else
+        echo "Dry Run - would execute:"
+        if [ "$installer" = "sudo pacman" ]; then
+            echo "  sudo pacman -S --needed ${missing[*]}"
+        else
+            echo "  $installer -S --needed ${missing[*]}"
+        fi
+    fi
+}
+
+list_packages() {
+    get_packages
+}
+
+show_help() {
+    awk '/^set -euo pipefail/ { exit } /^# / { sub(/^# ?/, ""); print }' "$SCRIPT_FILE"
+}
+
+ACTION="install"
+
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        -i|--install)
+            ACTION="install"
+            shift
+            ;;
+        -c|--check)
+            ACTION="check"
+            shift
+            ;;
+        -l|--list)
+            ACTION="list"
+            shift
+            ;;
+        -d|--dry-run)
+            ACTION="dry_run"
+            shift
+            ;;
+        -h|--help)
+            ACTION="help"
+            shift
+            ;;
+        *)
+            echo "Unknown option: $1" >&2
+            show_help
+            exit 1
+            ;;
+    esac
+done
+
+case "$ACTION" in
+    install) install_packages ;;
+    check)   check_packages ;;
+    list)    list_packages ;;
+    dry_run) dry_run ;;
+    help)    show_help ;;
+esac
+
+exit 0
+
+# --- PACKAGE LIST ---
 ## Programming Languages & Runtimes
 base-devel         # C/C++ toolchain (gcc, make, etc.)
 cmake              # Build system
@@ -98,8 +304,6 @@ yazi               # Terminal file manager
 nemo               # GUI file manager
 fff                # alternative to yazi
 docker             # Containerization
-ineutils
-net-tools
 
 ## Editors & IDEs
 emacs              # Extensible editor

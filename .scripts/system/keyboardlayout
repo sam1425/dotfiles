@@ -1,6 +1,11 @@
 #!/bin/sh
 
-DMENU="dmenu -c -l 6 -h 40"
+normbgcolor="#111314"
+normfgcolor="#EBDBB2"
+selbordercolor="#289c93"
+selfgcolor="#141c21"
+
+DMENU="dmenu -c -l 6 -h 40 -nb $normbgcolor -nf $normfgcolor -sb $selbordercolor -sf $selfgcolor"
 
 choice=$(printf "US\nEspañol\nFrançais\nFrançaisQY\nDvorak\nColemak\n" | $DMENU)
 

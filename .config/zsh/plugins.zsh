@@ -6,8 +6,8 @@
 # ██║     ███████╗╚██████╔╝╚██████╔╝██║██║ ╚████║███████║
 # ╚═╝     ╚══════╝ ╚═════╝  ╚═════╝ ╚═╝╚═╝  ╚═══╝╚══════╝
 
-source /usr/share/fzf/completion.zsh
-source /usr/share/fzf/key-bindings.zsh
+[[ -f /usr/share/fzf/completion.zsh ]] && source /usr/share/fzf/completion.zsh
+[[ -f /usr/share/fzf/key-bindings.zsh ]] && source /usr/share/fzf/key-bindings.zsh
 
 if [[ ! -f "$ZSH_RAM_CACHE/sheldon_source.zsh" || "$XDG_CONFIG_HOME/sheldon/plugins.toml" -nt "$ZSH_RAM_CACHE/sheldon_source.zsh" ]]; then
   sheldon source > "$ZSH_RAM_CACHE/sheldon_source.zsh"

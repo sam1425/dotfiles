@@ -8,7 +8,7 @@
 #especific for monogame engine
 alias mgcb_editor='dotnet mgcb-editor Content/Content.mgcb'
 #platform specific:
-bgr() { feh --bg-scale "$(command find ~/Pictures/wallpaper -type f | shuf -n1)"; }
+bgr() { local img; img="$(command find ~/Pictures/wallpaper -type f 2>/dev/null | shuf -n1)"; [[ -n "$img" ]] && feh --bg-scale "$img"; }
 alias icat='kitten icat'
 alias lynx='command lynx -vikeys'
 alias Prompt='PROMPT="%~ % "'
@@ -71,7 +71,7 @@ alias .....='\cd ../../../../'
 alias psg="ps aux | grep -v grep | grep -i -e VSZ -e"
 alias md="mkdir -p"
 alias fm='yazi'
-alias orphans='pacman -Qtdq | sudo pacman -Rns -'
+alias orphans='pacman -Qtdq | xargs -r sudo pacman -Rns'
 alias update='mirrors && sudo pacman -Syu'
 alias pacin="pacman -Slq | fzf -m --preview 'cat <(pacman -Si {1}) <(pacman -Fl {1} | awk \"{print \$2}\")' | xargs -ro sudo pacman -S"
 alias paruin="paru -Slq | strings | fzf -m --preview 'paru -Si {1}; echo -e \"\nFILES:\"; paru -Fl {1} | awk \"{print \$2}\" | head -n 100' | xargs -ro paru -S"
@@ -84,7 +84,7 @@ alias parupd="paru -Qua"
 alias pacupd="pacman -Qu"
 alias pacpac="pacman -Qent"
 alias parucheck="paru -Gp"
-alias cleanpac='sudo pacman -Rns $(pacman -Qtdq); paru -c'
+alias cleanpac='pacman -Qtdq | xargs -r sudo pacman -Rns; paru -c'
 alias installed="grep -i installed /var/log/pacman.log"
 alias unlock="sudo rm -f /var/lib/pacman/db.lck"
 alias ls="eza --icons --group-directories-first --git"
