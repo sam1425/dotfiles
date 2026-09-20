@@ -4,6 +4,29 @@
 
 # $HOME/.scripts/loginart/optimizedlogincatwithhtext
 
+if [ "$TERM" = "linux" ]; then
+  export STARSHIP_CONFIG="$HOME/.config/starship/starship-tty.toml"
+  printf '\e[?6c'
+
+function zle-keymap-select {
+  if [ "$TERM" = "linux" ]; then
+    if [[ ${KEYMAP} == vicmd ]]; then
+      printf '\e[?2c'  # underline — normal/command mode
+    else
+      printf '\e[?6c'  # block — insert mode
+    fi
+  fi
+}
+zle -N zle-keymap-select
+
+zle-line-init() {
+  if [ "$TERM" = "linux" ]; then
+    printf '\e[?6c'  # start each new prompt line in block (insert)
+  fi
+}
+zle -N zle-line-init
+fi
+
 if [[ ! -f "$ZSH_RAM_CACHE/starship_init.zsh" ]]; then
   starship init zsh > "$ZSH_RAM_CACHE/starship_init.zsh"
 fi
