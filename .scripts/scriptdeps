@@ -382,5 +382,5 @@ yad                # Popup for scripts
 boxes              # Wrap terminal text into boxes
 scrot         # alternative binary to take screenshots
 git-delta          # beautiful git diffs
-ineutils
+inetutils
 net-tools

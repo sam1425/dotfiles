@@ -61,6 +61,22 @@ manifest for your distribution before running the installer, then add the
 optional packages that match the applications you use. They are intentionally
 reviewable lists rather than an installer that changes your system.
 
+### Workflow commands
+
+The scripts directory includes a few workflow helpers:
+
+```bash
+open-file path/to/file    # Open a file with an editor, image viewer, media player, or xdg-open
+scratch [name]            # Create or open a file in ~/.local/share/scratch
+run                       # Choose a task for the nearest detected project
+run path/to/file          # Run a supported source file
+```
+
+When `run` is used inside a project, it detects common files such as
+`Cargo.toml`, `package.json`, `go.mod`, `mix.exs`, `Makefile`, and `justfile`,
+then uses `fzf` to choose an appropriate build, test, or run task. Without a
+project, it preserves the existing executable-menu fallback.
+
 ---
 *feel free to copy what you like!*
 

@@ -222,6 +222,11 @@ cls() {
 
 
 run() {
+    if [[ $# -eq 0 ]]; then
+        ~/.scripts/bin/project-run
+        return
+    fi
+
     local file=$1
     if [[ -z "$file" ]]; then
         if [ -f justfile ] || [ -f Justfile ]; then
