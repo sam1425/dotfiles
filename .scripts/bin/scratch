@@ -1,0 +1,27 @@
+#!/bin/sh
+set -eu
+
+scratch_dir=${XDG_DATA_HOME:-"$HOME/.local/share"}/scratch
+mkdir -p "$scratch_dir"
+
+if [ "$#" -gt 1 ]; then
+    printf 'Usage: scratch [name]\n' >&2
+    exit 2
+fi
+
+if [ "$#" -eq 1 ]; then
+    name=$1
+else
+    name="note-$(date +%Y-%m-%d-%H%M%S).md"
+fi
+
+case "$name" in
+    */*|.*|..)
+        printf 'Scratch names must be a single file name.\n' >&2
+        exit 2
+        ;;
+esac
+
+file=$scratch_dir/$name
+touch "$file"
+exec "${EDITOR:-vim}" "$file"

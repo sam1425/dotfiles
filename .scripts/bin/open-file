@@ -1,0 +1,46 @@
+#!/bin/sh
+set -eu
+
+if [ "$#" -eq 0 ]; then
+    printf '%s\n' "Usage: open-file FILE..." >&2
+    exit 2
+fi
+
+open_one() {
+    path=$1
+
+    if [ -d "$path" ]; then
+        exec yazi "$path"
+    fi
+
+    case "$path" in
+        *.c|*.h|*.cc|*.cpp|*.cxx|*.hpp|*.cs|*.css|*.el|*.ex|*.exs|*.go|*.hs|*.java|*.js|*.json|*.lua|*.md|*.nim|*.py|*.rb|*.rs|*.sh|*.toml|*.ts|*.tsx|*.txt|*.vim|*.xml|*.yaml|*.yml|*.zig)
+            exec "${EDITOR:-vim}" "$path"
+            ;;
+        *.png|*.jpg|*.jpeg|*.gif|*.webp|*.bmp|*.svg)
+            if command -v nsxiv >/dev/null 2>&1; then
+                exec nsxiv "$path"
+            fi
+            ;;
+        *.mp3|*.flac|*.m4a|*.ogg|*.opus|*.wav|*.mp4|*.mkv|*.webm|*.avi)
+            if command -v mpv >/dev/null 2>&1; then
+                exec mpv "$path"
+            fi
+            ;;
+    esac
+
+    if command -v xdg-open >/dev/null 2>&1; then
+        exec xdg-open "$path"
+    fi
+
+    printf 'No opener found for %s\n' "$path" >&2
+    return 1
+}
+
+if [ "$#" -eq 1 ]; then
+    open_one "$1"
+else
+    for path do
+        open_one "$path"
+    done
+fi

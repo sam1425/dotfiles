@@ -1,0 +1,98 @@
+#!/bin/sh
+set -eu
+
+find_root() {
+    dir=$PWD
+    while [ "$dir" != "/" ]; do
+        for marker in justfile Justfile Makefile Cargo.toml package.json go.mod mix.exs; do
+            [ -e "$dir/$marker" ] && {
+                printf '%s\n' "$dir"
+                return 0
+            }
+        done
+        find "$dir" -maxdepth 1 \( -name '*.sln' -o -name '*.csproj' \) -print -quit |
+            grep -q . && {
+                printf '%s\n' "$dir"
+                return 0
+            }
+        dir=$(dirname "$dir")
+    done
+    return 1
+}
+
+run_file() {
+    file=$1
+    shift
+    [ -f "$file" ] || {
+        printf 'Error: file not found: %s\n' "$file" >&2
+        return 1
+    }
+    ext=${file##*.}
+    output=${file%.*}
+    case "$ext" in
+        sh) exec sh "$file" "$@" ;;
+        py) exec python3 "$file" "$@" ;;
+        js) exec node "$file" "$@" ;;
+        ts|tsx) exec tsx "$file" "$@" ;;
+        go) exec go run "$file" "$@" ;;
+        rs) exec cargo script "$file" "$@" ;;
+        rb) exec ruby "$file" "$@" ;;
+        lua) exec lua "$file" "$@" ;;
+        ex|exs|exl) exec elixir "$file" "$@" ;;
+        c) gcc "$file" -o "$output" && exec "./$output" "$@" ;;
+        cpp|cc|cxx) g++ "$file" -o "$output" && exec "./$output" "$@" ;;
+        *) printf 'Error: unsupported extension .%s\n' "$ext" >&2; return 1 ;;
+    esac
+}
+
+run_project() {
+    root=$1
+    cd "$root"
+    choices=
+    if [ -f justfile ] || [ -f Justfile ]; then
+        choices='just
+'
+    elif [ -f Makefile ]; then
+        choices='make
+make test
+'
+    fi
+    [ -f Cargo.toml ] && choices="${choices}cargo check
+cargo test
+cargo run
+"
+    [ -f package.json ] && choices="${choices}npm test
+npm run build
+npm run dev
+"
+    [ -f go.mod ] && choices="${choices}go test ./...
+go build ./...
+go run .
+"
+    [ -f mix.exs ] && choices="${choices}mix test
+mix compile
+"
+    find . -maxdepth 1 \( -name '*.sln' -o -name '*.csproj' \) -print -quit |
+        grep -q . && choices="${choices}dotnet build
+dotnet test
+"
+    [ -n "$choices" ] || return 1
+
+    if command -v fzf >/dev/null 2>&1; then
+        choice=$(printf '%s' "$choices" | fzf --prompt='Project task: ') || return 0
+    else
+        choice=$(printf '%s' "$choices" | sed -n '1p')
+    fi
+    [ -n "$choice" ] && sh -c "$choice"
+}
+
+if [ "$#" -gt 0 ]; then
+    run_file "$@"
+elif root=$(find_root); then
+    run_project "$root"
+elif [ -x "$HOME/.scripts/funcrun" ]; then
+    exec "$HOME/.scripts/funcrun"
+else
+    printf 'No project detected and funcrun is unavailable.\n' >&2
+    exit 1
+fi
