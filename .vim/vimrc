@@ -109,6 +109,9 @@ set wildmenu
 
 set relativenumber
 set undofile
+if !isdirectory(expand('~/.vim/filebackups'))
+    call mkdir(expand('~/.vim/filebackups'), 'p')
+endif
 set undodir=~/.vim/filebackups/
 
 set makeprg=just

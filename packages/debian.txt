@@ -29,5 +29,8 @@ x11-utils
 jq
 curl
 libnotify-bin
+ripgrep
+doas
+git-delta
 make
 build-essential

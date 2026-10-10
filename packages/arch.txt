@@ -32,5 +32,8 @@ xorg-xwininfo
 jq
 curl
 notify-osd
+ripgrep
+opendoas
+git-delta
 make
 base-devel

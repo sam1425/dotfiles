@@ -25,6 +25,7 @@ confirm() {
     fi
 }
 
+
 install_stow() {
     [[ -f /etc/os-release ]] || { echo 'Cannot identify this distribution; install stow manually.' >&2; exit 1; }
     # shellcheck disable=SC1091

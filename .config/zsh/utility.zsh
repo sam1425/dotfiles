@@ -107,6 +107,8 @@ function _sudo_command_line() {
   }
 }
 
+
+
 function _vi_search_fix() {
   zle vi-cmd-mode
   zle .vi-history-search-backward
@@ -209,7 +211,7 @@ sanitize() {
     sanitized=${sanitized//$'\v'/}
     sanitized=${sanitized//$'\f'/}
     
-    printf "%s" "$sanitized" | xclip -selection clipboard -i
+    printf "%s" "$sanitized" | copy
 }
 # Smart clear function
 cls() {
