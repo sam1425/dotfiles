@@ -33,6 +33,7 @@ if (( $+commands[luarocks] )); then
 fi
 export GOPATH="$HOME/.local/share/go/pkg"
 export PATH="$GOPATH/bin:$PATH"
+typeset -U PATH path  # Deduplicate PATH on every shell reload
 export UNISON="$HOME/.config/unison"
 export SUDO_PROMPT=$'\e[1;35mpass\e[0m \e[1;30m❯ \e[0m'
 export TERMINAL="kitty"

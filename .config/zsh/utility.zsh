@@ -306,4 +306,27 @@ extract () {
     fi
 }
 
+cmds() {
+    {
+        # Aliases
+        alias | sed "s/^/$(printf '\033[1;33m')alias $(printf '\033[0m')/"
+        # Functions (skip internal zsh/zvm/fzf ones)
+        print -l ${(ok)functions} | grep -vE '^(_|zvm_|zle-|compdef|__zoxide)' \
+            | sed "s/^/$(printf '\033[1;34m')func  $(printf '\033[0m')/"
+    } | fzf --ansi \
+            --prompt='cmds ❯ ' \
+            --pointer='|>' \
+            --layout=reverse \
+            --header='Your aliases & functions' \
+            --preview='
+                name=$(echo {} | sed "s/^[^ ]* [^ ]* //;s/=.*//")
+                if alias "$name" &>/dev/null; then
+                    alias "$name"
+                else
+                    which "$name" 2>/dev/null | bat --color=always -l zsh --plain
+                fi
+            ' \
+            --preview-window=right:50%
+}
+
 # vim:ft=zsh

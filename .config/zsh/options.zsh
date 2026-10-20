@@ -33,6 +33,11 @@ else
   compinit -i -C -d "$ZCOMPDUMP"
 fi
 
+# Compile config files to bytecode in the background when modified
+{ for f in ~/.zshrc ~/.config/zsh/*.zsh; do
+    [[ ! -f $f.zwc || $f -nt $f.zwc ]] && zcompile $f
+  done } &!
+
 zle -N _sudo_command_line
 
 # History
@@ -74,6 +79,10 @@ HIST_NO_FUNCTIONS
 HIST_EXPIRE_DUPS_FIRST
 HIST_SAVE_NO_DUPS
 HIST_REDUCE_BLANKS
+AUTO_PUSHD
+PUSHD_IGNORE_DUPS
+PUSHD_SILENT
+PUSHD_MINUS
 EOF
 
 while read -r opt

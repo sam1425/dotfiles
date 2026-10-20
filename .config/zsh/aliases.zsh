@@ -53,6 +53,10 @@ cz() {
   dir=$(zoxide query -l | fzf --reverse --height 40% --preview 'eza --tree --level 2 --icons {}' --preview-window right:50%) && cd "$dir"
 }
 
+alias -g NE='2>/dev/null'
+alias -g NO='>/dev/null'
+alias -g NA='>/dev/null 2>&1'
+
 #Useful:
 alias sudo='sudo '
 alias exe="chmod +x"
