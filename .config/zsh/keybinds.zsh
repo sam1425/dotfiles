@@ -14,13 +14,13 @@ function _smart-k-up() {
         BUFFER=$BUFFER$POSTDISPLAY
         CURSOR=$#BUFFER
         POSTDISPLAY=
-    elif [[ -n "${widgets[history-substring-search-up]}" ]]; then
+    fi
+    if [[ -n "${widgets[history-substring-search-up]}" ]]; then
         zle history-substring-search-up
     else
         zle up-line-or-history
     fi
 }
-
 
 function _smart-j-down() {
     if [[ -n "${widgets[history-substring-search-down]}" ]]; then
