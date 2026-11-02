@@ -88,8 +88,8 @@ function zvm_after_init() {
 }
 
 function zvm_after_lazy_keybindings() {
-        zvm_quote_seeker() {
-        # Inlined from zvm_keys() — avoids a subshell fork per keypress
+    zvm_quote_seeker() {
+        # Inlined from zvm_keys() [jeffreytse/zsh-vi-mode]
         local keys=${ZVM_KEYS:-$KEYS}
         case "${ZVM_MODE}" in
             ($ZVM_MODE_VISUAL)      [[ "$keys" != v* ]] && keys="v${keys}" ;;
@@ -98,7 +98,7 @@ function zvm_after_lazy_keybindings() {
         keys=${keys//$'\n'/$ZVM_ESCAPE_NEWLINE}
         keys=${keys// /$ZVM_ESCAPE_SPACE}
 
-        # Inlined from zvm_parse_surround_keys() — same reason
+        # Inlined from zvm_parse_surround_keys() [jeffreytse/zsh-vi-mode]
         local action= surround=
         case "${keys}" in
             (vS*) action=S;    surround=${keys:2} ;;
@@ -107,46 +107,209 @@ function zvm_after_lazy_keybindings() {
             (s[dr]*) action=${keys:1:1}; surround=${keys:2} ;;
             ([acd]s*) action=${keys:0:1}; surround=${keys:2} ;;
             ([cdvy][ia]*) action=${keys:0:2}; surround=${keys:2} ;;
+            ([ia]*) action=${keys:0:1}; surround=${keys:1} ;;
         esac
         local char=${surround// /$ZVM_ESCAPE_SPACE}
         local widget
 
-        if [[ "${action:0:1}" == "v" ]]; then
+        if [[ "${action:0:1}" == "v" || "${action:0:1}" == "i" || "${action:0:1}" == "a" ]]; then
             widget="zvm_select_surround"
             [[ "$ZVM_MODE" != "$ZVM_MODE_VISUAL" ]] && zvm_select_vi_mode $ZVM_MODE_VISUAL
         else
             widget="zvm_change_surround_text_object"
         fi
 
-        if [[ "$BUFFER" == *"$char"* ]]; then
-            local fwd=${BUFFER[(ib:CURSOR+2:)$char]}
-            if (( fwd <= ${#BUFFER} )); then
+        # Inlined from zvm_match_surround() [jeffreytse/zsh-vi-mode]
+        # Resolves open/close pair for brackets; quotes stay symmetric.
+        local bchar=$char echar=$char
+        case $char in
+            ('(') echar=')' ;;
+            ('[') echar=']' ;;
+            ('{') echar='}' ;;
+            ('<') echar='>' ;;
+            (')') bchar='(' ;;
+            (']') bchar='[' ;;
+            ('}') bchar='{' ;;
+            ('>') bchar='<' ;;
+        esac
+
+        # Plain bounded scan — forward first, backward fallback.
+        if [[ "$BUFFER" == *"$bchar"* || "$BUFFER" == *"$echar"* ]]; then
+            local len=${#BUFFER} i fwd=0 bwd=0
+            for (( i = CURSOR + 1; i <= len; i++ )); do
+                [[ ${BUFFER[i]} == "$bchar" || ${BUFFER[i]} == "$echar" ]] && { fwd=$i; break }
+            done
+            if (( fwd > 0 )); then
                 CURSOR=$((fwd - 1))
             else
-                local bwd=${BUFFER[(Ib:CURSOR:)$char]}
+                for (( i = CURSOR + 1; i >= 1; i-- )); do
+                    [[ ${BUFFER[i]} == "$bchar" || ${BUFFER[i]} == "$echar" ]] && { bwd=$i; break }
+                done
                 (( bwd > 0 )) && CURSOR=$((bwd - 1))
             fi
         fi
 
+        # The real zvm_search_surround/zvm_change_surround_text_object
+        # take it from here — they still fork their own subshells
+        # internally, but only once per actual action, not per scan.
         $widget "$action" "$char"
     }
     zvm_define_widget zvm_quote_seeker
 
-    local -a quotes=('"' "'" '`')
-    local q
-    for q in $quotes; do
-        zvm_bindkey visual "i$q" zvm_quote_seeker
-        zvm_bindkey visual "a$q" zvm_quote_seeker
-        zvm_bindkey vicmd  "vi$q" zvm_quote_seeker
-        zvm_bindkey vicmd  "va$q" zvm_quote_seeker
-        zvm_bindkey vicmd  "ci$q" zvm_quote_seeker
-        zvm_bindkey vicmd  "ca$q" zvm_quote_seeker
-        zvm_bindkey vicmd  "di$q" zvm_quote_seeker
-        zvm_bindkey vicmd  "da$q" zvm_quote_seeker
-        zvm_bindkey vicmd  "yi$q" zvm_quote_seeker
-        zvm_bindkey vicmd  "ya$q" zvm_quote_seeker
-        zvm_bindkey viopp  "i$q" zvm_quote_seeker
-        zvm_bindkey viopp  "a$q" zvm_quote_seeker
+    local -a surround_chars=('"' "'" '`' '(' ')' '[' ']' '{' '}' '<' '>')
+    local c
+    for c in $surround_chars; do
+        zvm_bindkey visual "i$c" zvm_quote_seeker
+        zvm_bindkey visual "a$c" zvm_quote_seeker
+        zvm_bindkey vicmd  "vi$c" zvm_quote_seeker
+        zvm_bindkey vicmd  "va$c" zvm_quote_seeker
+        zvm_bindkey vicmd  "ci$c" zvm_quote_seeker
+        zvm_bindkey vicmd  "ca$c" zvm_quote_seeker
+        zvm_bindkey vicmd  "di$c" zvm_quote_seeker
+        zvm_bindkey vicmd  "da$c" zvm_quote_seeker
+        zvm_bindkey vicmd  "yi$c" zvm_quote_seeker
+        zvm_bindkey vicmd  "ya$c" zvm_quote_seeker
+        zvm_bindkey viopp  "i$c" zvm_quote_seeker
+        zvm_bindkey viopp  "a$c" zvm_quote_seeker
     done
+    zvm_change_surround() {
+    local ret=($(zvm_parse_surround_keys)) 
+    local action=${1:-${ret[1]}} 
+    local surround=${2:-${ret[2]//$ZVM_ESCAPE_SPACE/ }} 
+    local bpos=${3} epos=${4} 
+    local is_appending=false 
+    case $action in
+        (S | y | a) is_appending=true  ;;
+    esac
+    if $is_appending
+    then
+        if [[ -z $bpos && -z $epos ]]
+        then
+            ret=($(zvm_selection)) 
+            bpos=${ret[1]} epos=${ret[2]} 
+        fi
+    else
+        # Scan and move cursor to nearest surround char if outside
+        local bchar=$surround echar=$surround
+        case $surround in
+            ('(') echar=')' ;;
+            ('[') echar=']' ;;
+            ('{') echar='}' ;;
+            ('<') echar='>' ;;
+        esac
+        if [[ "$BUFFER" == *"$bchar"* || "$BUFFER" == *"$echar"* ]]; then
+            local len=${#BUFFER} i fwd=0 bwd=0
+            for (( i = CURSOR + 1; i <= len; i++ )); do
+                [[ ${BUFFER[i]} == "$bchar" || ${BUFFER[i]} == "$echar" ]] && { fwd=$i; break }
+            done
+            if (( fwd > 0 )); then
+                CURSOR=$((fwd - 1))
+            else
+                for (( i = CURSOR + 1; i >= 1; i-- )); do
+                    [[ ${BUFFER[i]} == "$bchar" || ${BUFFER[i]} == "$echar" ]] && { bwd=$i; break }
+                done
+                (( bwd > 0 )) && CURSOR=$((bwd - 1))
+            fi
+        fi
+
+        ret=($(zvm_search_surround "$surround")) 
+        (( ${#ret[@]} )) || return
+        bpos=${ret[1]} epos=${ret[2]} 
+        zvm_highlight custom $bpos $(($bpos+1))
+        zvm_highlight custom $epos $(($epos+1))
+    fi
+    local key= 
+    case $action in
+        (c | r) zvm_enter_oppend_mode
+            read -k 1 key
+            zvm_exit_oppend_mode ;;
+        (S | y | a) if [[ -z $surround ]]
+            then
+                zvm_enter_oppend_mode
+                read -k 1 key
+                zvm_exit_oppend_mode
+            else
+                key=$surround 
+            fi
+            if [[ $ZVM_MODE == $ZVM_MODE_VISUAL ]]
+            then
+                zle visual-mode
+            fi ;;
+    esac
+    case "$key" in
+        ($'\e' | "${ZVM_VI_ESCAPE_BINDKEY//\^\[/$'\e'}") zvm_highlight clear
+            return ;;
+    esac
+    ret=($(zvm_match_surround "$key")) 
+    local bchar=${${ret[1]//$ZVM_ESCAPE_SPACE/ }:-$key} 
+    local echar=${${ret[2]//$ZVM_ESCAPE_SPACE/ }:-$key} 
+    local value=$($is_appending && echo 0 || echo 1 ) 
+    local head=${BUFFER:0:$bpos} 
+    local body=${BUFFER:$((bpos+value)):$((epos-(bpos+value)))} 
+    local foot=${BUFFER:$((epos+value))} 
+    BUFFER="${head}${bchar}${body}${echar}${foot}" 
+    zvm_highlight clear
+    case $action in
+        (S | y | a) zvm_select_vi_mode $ZVM_MODE_NORMAL ;;
+    esac
 }
+
+    zvm_change_surround_text_object() {
+        local ret=($(zvm_parse_surround_keys))
+        local action=${1:-${ret[1]}}
+        local surround=${2:-${ret[2]//$ZVM_ESCAPE_SPACE/ }}
+        local char=$surround
+
+        local bchar=$char echar=$char
+        case $char in
+            ('(') echar=')' ;;
+            ('[') echar=']' ;;
+            ('{') echar='}' ;;
+            ('<') echar='>' ;;
+            (')') bchar='(' ;;
+            (']') bchar='[' ;;
+            ('}') bchar='{' ;;
+            ('>') bchar='<' ;;
+        esac
+
+        if [[ "$BUFFER" == *"$bchar"* || "$BUFFER" == *"$echar"* ]]; then
+            local len=${#BUFFER} i fwd=0 bwd=0
+            for (( i = CURSOR + 1; i <= len; i++ )); do
+                [[ ${BUFFER[i]} == "$bchar" || ${BUFFER[i]} == "$echar" ]] && { fwd=$i; break }
+            done
+            if (( fwd > 0 )); then
+                CURSOR=$((fwd - 1))
+            else
+                for (( i = CURSOR + 1; i >= 1; i-- )); do
+                    [[ ${BUFFER[i]} == "$bchar" || ${BUFFER[i]} == "$echar" ]] && { bwd=$i; break }
+                done
+                (( bwd > 0 )) && CURSOR=$((bwd - 1))
+            fi
+        fi
+
+        ret=($(zvm_search_surround "${surround}"))
+        if [[ ${#ret[@]} == 0 ]]
+        then
+            zvm_select_vi_mode $ZVM_MODE_NORMAL
+            return
+        fi
+        local bpos=${ret[1]}
+        local epos=${ret[2]}
+        if [[ ${action:1:1} == 'i' ]]
+        then
+            ((bpos++))
+        else
+            ((epos++))
+        fi
+        CUTBUFFER=${BUFFER:$bpos:$(($epos-$bpos))}
+        case ${action:0:1} in
+            (c) BUFFER="${BUFFER:0:$bpos}${BUFFER:$epos}"
+                    CURSOR=$bpos
+                    zvm_select_vi_mode $ZVM_MODE_INSERT ;;
+            (d) BUFFER="${BUFFER:0:$bpos}${BUFFER:$epos}"
+                    CURSOR=$bpos  ;;
+        esac
+    }
+}
+
 # vim:ft=zsh:nowrap
