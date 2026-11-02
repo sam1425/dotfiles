@@ -80,7 +80,6 @@ function zvm_after_init() {
 
     #zvm_bindkey viins '^?' vi-backward-kill-word
 
-    zvm_bindkey viins '^F' _fzf_find_file
     zvm_bindkey vicmd '^F' _fzf_find_file
 
     zvm_bindkey viins '^[[13;2u' zvm_escape_newline_indent
@@ -89,82 +88,65 @@ function zvm_after_init() {
 }
 
 function zvm_after_lazy_keybindings() {
-    # Checks if there is a detected soround keys ahead
-    zvm_quote_seeker() {
-        local ret=($(zvm_parse_surround_keys))
-        local action=${ret[1]}
-        local char=${ret[2]}
+        zvm_quote_seeker() {
+        # Inlined from zvm_keys() — avoids a subshell fork per keypress
+        local keys=${ZVM_KEYS:-$KEYS}
+        case "${ZVM_MODE}" in
+            ($ZVM_MODE_VISUAL)      [[ "$keys" != v* ]] && keys="v${keys}" ;;
+            ($ZVM_MODE_VISUAL_LINE) [[ "$keys" != V* ]] && keys="V${keys}" ;;
+        esac
+        keys=${keys//$'\n'/$ZVM_ESCAPE_NEWLINE}
+        keys=${keys// /$ZVM_ESCAPE_SPACE}
+
+        # Inlined from zvm_parse_surround_keys() — same reason
+        local action= surround=
+        case "${keys}" in
+            (vS*) action=S;    surround=${keys:2} ;;
+            (vsa*) action=a;   surround=${keys:3} ;;
+            (vys*) action=y;   surround=${keys:3} ;;
+            (s[dr]*) action=${keys:1:1}; surround=${keys:2} ;;
+            ([acd]s*) action=${keys:0:1}; surround=${keys:2} ;;
+            ([cdvy][ia]*) action=${keys:0:2}; surround=${keys:2} ;;
+        esac
+        local char=${surround// /$ZVM_ESCAPE_SPACE}
         local widget
 
-        # Determine the ZVM internal widget and ensure mode
         if [[ "${action:0:1}" == "v" ]]; then
             widget="zvm_select_surround"
-            # Ensure we are in visual mode if calling vi" from cmd mode
-            if [[ "$ZVM_MODE" != "$ZVM_MODE_VISUAL" ]]; then
-                zvm_select_vi_mode $ZVM_MODE_VISUAL
-            fi
+            [[ "$ZVM_MODE" != "$ZVM_MODE_VISUAL" ]] && zvm_select_vi_mode $ZVM_MODE_VISUAL
         else
             widget="zvm_change_surround_text_object"
         fi
 
-        # Check if surround exists here
-        local found=($(zvm_search_surround "$char"))
-
-        if [[ ${#found[@]} == 0 ]]; then
-            # No quote here, seek forward
-            local next=$(zvm_substr_pos "$BUFFER" "$char" $((CURSOR + 1)) true)
-            if [[ $next != -1 ]]; then
-                CURSOR=$((next + 1))
+        if [[ "$BUFFER" == *"$char"* ]]; then
+            local fwd=${BUFFER[(ib:CURSOR+2:)$char]}
+            if (( fwd <= ${#BUFFER} )); then
+                CURSOR=$((fwd - 1))
+            else
+                local bwd=${BUFFER[(Ib:CURSOR:)$char]}
+                (( bwd > 0 )) && CURSOR=$((bwd - 1))
             fi
         fi
 
-        # Trigger ZVM action
         $widget "$action" "$char"
     }
-zvm_define_widget zvm_quote_seeker
+    zvm_define_widget zvm_quote_seeker
 
-# 2. Explicit Safe Bindings
-
-# --- Double Quotes ---
-zvm_bindkey visual 'i"' zvm_quote_seeker
-zvm_bindkey visual 'a"' zvm_quote_seeker
-zvm_bindkey vicmd  'vi"' zvm_quote_seeker
-zvm_bindkey vicmd  'va"' zvm_quote_seeker
-zvm_bindkey vicmd  'ci"' zvm_quote_seeker
-zvm_bindkey vicmd  'ca"' zvm_quote_seeker
-zvm_bindkey vicmd  'di"' zvm_quote_seeker
-zvm_bindkey vicmd  'da"' zvm_quote_seeker
-zvm_bindkey vicmd  'yi"' zvm_quote_seeker
-zvm_bindkey vicmd  'ya"' zvm_quote_seeker
-zvm_bindkey viopp  'i"' zvm_quote_seeker
-zvm_bindkey viopp  'a"' zvm_quote_seeker
-
-# --- Single Quotes ---
-zvm_bindkey visual "i'" zvm_quote_seeker
-zvm_bindkey visual "a'" zvm_quote_seeker
-zvm_bindkey vicmd  "vi'" zvm_quote_seeker
-zvm_bindkey vicmd  "va'" zvm_quote_seeker
-zvm_bindkey vicmd  "ci'" zvm_quote_seeker
-zvm_bindkey vicmd  "ca'" zvm_quote_seeker
-zvm_bindkey vicmd  "di'" zvm_quote_seeker
-zvm_bindkey vicmd  "da'" zvm_quote_seeker
-zvm_bindkey vicmd  "yi'" zvm_quote_seeker
-zvm_bindkey vicmd  "ya'" zvm_quote_seeker
-zvm_bindkey viopp  "i'" zvm_quote_seeker
-zvm_bindkey viopp  "a'" zvm_quote_seeker
-
-# --- Backticks ---
-zvm_bindkey visual 'i`' zvm_quote_seeker
-zvm_bindkey visual 'a`' zvm_quote_seeker
-zvm_bindkey vicmd  'vi`' zvm_quote_seeker
-zvm_bindkey vicmd  'va`' zvm_quote_seeker
-zvm_bindkey vicmd  'ci`' zvm_quote_seeker
-zvm_bindkey vicmd  'ca`' zvm_quote_seeker
-zvm_bindkey vicmd  'di`' zvm_quote_seeker
-zvm_bindkey vicmd  'da`' zvm_quote_seeker
-zvm_bindkey vicmd  'yi`' zvm_quote_seeker
-zvm_bindkey vicmd  'ya`' zvm_quote_seeker
-zvm_bindkey viopp  'i`' zvm_quote_seeker
-zvm_bindkey viopp  'a`' zvm_quote_seeker
+    local -a quotes=('"' "'" '`')
+    local q
+    for q in $quotes; do
+        zvm_bindkey visual "i$q" zvm_quote_seeker
+        zvm_bindkey visual "a$q" zvm_quote_seeker
+        zvm_bindkey vicmd  "vi$q" zvm_quote_seeker
+        zvm_bindkey vicmd  "va$q" zvm_quote_seeker
+        zvm_bindkey vicmd  "ci$q" zvm_quote_seeker
+        zvm_bindkey vicmd  "ca$q" zvm_quote_seeker
+        zvm_bindkey vicmd  "di$q" zvm_quote_seeker
+        zvm_bindkey vicmd  "da$q" zvm_quote_seeker
+        zvm_bindkey vicmd  "yi$q" zvm_quote_seeker
+        zvm_bindkey vicmd  "ya$q" zvm_quote_seeker
+        zvm_bindkey viopp  "i$q" zvm_quote_seeker
+        zvm_bindkey viopp  "a$q" zvm_quote_seeker
+    done
 }
 # vim:ft=zsh:nowrap
